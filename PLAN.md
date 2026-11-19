@@ -22,14 +22,14 @@ Quatre mots-clés repris de la bannière : **Conception · Management · Pilotag
 
 | Couche | Choix | Remarque |
 |---|---|---|
-| Framework | **Next.js 15.5** (App Router, RSC, Server Actions), TypeScript strict | Next 16 est sorti — voir § 9 |
+| Framework | **Next.js 16** (App Router, RSC, Server Actions, Cache Components), TypeScript strict | validé |
 | Styles | **Tailwind CSS v4** (tokens en `@theme`), shadcn/ui pour l'admin uniquement | |
 | Animations | **GSAP + ScrollTrigger + SplitText** (chargés dynamiquement côté client), **Motion** pour les transitions de composants, **Lenis** | |
 | Données | **Supabase** : Postgres + Auth + Storage, RLS partout | |
 | Éditeur | **TipTap** (articles, campagnes) | |
 | Emails | **Resend** + React Email | |
 | Formulaires | Zod + React Hook Form | |
-| Analytics | **Umami** (sans cookies) | ou Plausible — § 9 |
+| Analytics | **Umami** (sans cookies) | par défaut |
 | Déploiement | Vercel | |
 | Qualité | ESLint, Prettier, Playwright (captures 1440 / 390 + tests e2e critiques) | |
 
@@ -227,10 +227,10 @@ Chaque phase = un ou plusieurs commits sur `main`, résumé + captures à la fin
 
 ## 9. Points à trancher / éléments manquants
 
-1. **`linkedin.pdf` manquant** — indispensable pour le parcours exact, les dates, le doctorat et les recommandations. Sans lui, la bio et la timeline restent `[À CONFIRMER]`.
+1. ~~`linkedin.pdf` manquant~~ → profil fourni, consigné dans `_sources/linkedin.md`.
 2. **Portrait HD** — la photo fournie fait 400×400 px : suffisant pour « À propos », **insuffisant pour un hero premium** (flou en Retina). Idéalement ≥ 1600 px de haut, fond le plus uni possible.
-3. **Logos** (Verallia, Woloyem, PMI ATP, université) — dossier vide ; placeholders typographiques en attendant.
-4. **Next.js 15 ou 16 ?** Le brief demande 15 ; la version stable actuelle est la 16. Je recommande **16** (même App Router, support plus long) sauf contrainte de ta part.
-5. **Comptes à créer** (à la phase 4/7, pas maintenant) : Supabase, Resend (+ domaine d'envoi vérifié), Vercel, Umami/Plausible. **Nom de domaine** prévu ?
+3. **Logos** — récupérés : Verallia, Woloyem, Capgemini, CNRS, badge PMP®. Restent : Université de Lorraine, Mines Nancy, PMI ATP, ITIL®.
+4. ~~Next.js 15 ou 16~~ → **16** retenu.
+5. **Nom de domaine** : plus tard. **Comptes à créer** (à la phase 4/7, pas maintenant) : Supabase, Resend (+ domaine d'envoi vérifié), Vercel, Umami/Plausible. **Nom de domaine** prévu ?
 6. **Email de contact** : `aveveyao@yahoo.com` (bannière). L'envoi Resend nécessite un domaine à soi (ex. `contact@yaoavevor.com`) ; le Yahoo reste l'adresse de réception.
 7. **Analytics** : Umami (gratuit auto-hébergé / cloud) ou Plausible (payant, très simple) ?
