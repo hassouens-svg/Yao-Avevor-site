@@ -28,7 +28,7 @@ export default async function LivrePage({ params }: { params: Promise<{ slug: st
           <ArrowLeft strokeWidth={1.5} className="size-4" /> Tous les livres
         </Link>
         <div className="mt-10 grid items-center gap-14 lg:grid-cols-12">
-          <div className="flex justify-center rounded-[28px] bg-[linear-gradient(160deg,#eaf5fd,#dcebf8)] py-16 lg:col-span-5">
+          <div className="flex justify-center rounded-md bg-[linear-gradient(160deg,#eaf5fd,#dcebf8)] py-16 lg:col-span-5">
             <Book3D title={book.title} subtitle={book.subtitle} cover={book.cover} />
           </div>
           <div className="lg:col-span-6 lg:col-start-7">
@@ -44,7 +44,7 @@ export default async function LivrePage({ params }: { params: Promise<{ slug: st
               </div>
             )}
             <ExcerptCarousel excerpts={book.excerpts} />
-            <div className="mt-10 rounded-[20px] border border-line bg-white p-6 sm:p-8">
+            <div className="mt-10 rounded-md border border-line bg-white p-6 sm:p-8">
               <h2 className="text-[1.5rem] text-navy-deep">{content.books.waitlistTitle}</h2>
               <p className="mt-1.5 text-[0.9375rem] text-muted">{content.books.waitlistText}</p>
               <WaitlistForm />

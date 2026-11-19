@@ -149,9 +149,9 @@ export const home: HomeContent = {
       {
         number: "04",
         tag: "Pédagogie",
-        title: "Finances personnelles & de projet",
-        lead: "Lire sa fiche de paie, comprendre l’impôt, piloter un budget de projet : des outils simples et des simulateurs.",
-        points: ["Fiche de paie décryptée", "L’impôt sur le revenu expliqué", "Valeur acquise & ROI", "Simulateurs en ligne"],
+        title: "Finances, bourse & immobilier",
+        lead: "Fiche de paie, impôts, bourse, immobilier locatif, budget de projet : comprendre les mécanismes, puis simuler.",
+        points: ["Fiche de paie & impôts", "Bourse : ETF, frais, horizon", "Immobilier locatif & cash-flow", "Valeur acquise & ROI"],
         href: "/outils",
         cta: "Essayer les simulateurs",
         image: "/images/banner/pilotage.jpg",
@@ -188,6 +188,8 @@ export const home: HomeContent = {
       { label: "Fonds d’urgence", href: "/outils#fonds-urgence" },
       { label: "Budget 50/30/20", href: "/outils#budget" },
       { label: "Mensualité de crédit", href: "/outils#credit" },
+      { label: "Investissement en bourse", href: "/marches#dca" },
+      { label: "Investissement locatif", href: "/marches#locatif" },
     ],
   },
 

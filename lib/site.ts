@@ -17,6 +17,7 @@ export const mainNav = [
   { href: "/a-propos", label: "À propos" },
   { href: "https://www.woloyem.com/", label: "Formations" },
   { href: "/articles", label: "Articles" },
+  { href: "/marches", label: "Bourse & immo" },
   { href: "/outils", label: "Simulateurs" },
   { href: "/livres", label: "Livres" },
 ] as const;
@@ -27,6 +28,7 @@ export const footerNav = {
     { href: "/articles", label: "Articles" },
     { href: "/livres", label: "Livres" },
     { href: "https://www.woloyem.com/", label: "Formations (Woloyem)" },
+    { href: "/marches", label: "Bourse & immobilier" },
     { href: "/outils", label: "Simulateurs" },
     { href: "/ressources", label: "Ressources" },
     { href: "/temoignages", label: "Témoignages" },

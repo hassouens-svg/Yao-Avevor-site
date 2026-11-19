@@ -7,12 +7,32 @@ export const categories: Category[] = [
   { slug: "fiche-de-paie", name: "Fiche de paie & salaire", isFinance: true },
   { slug: "budget-epargne", name: "Budget & épargne", isFinance: true },
   { slug: "impots", name: "Impôts", isFinance: true },
+  { slug: "bourse", name: "Bourse", isFinance: true },
+  { slug: "immobilier", name: "Immobilier", isFinance: true },
   { slug: "finances-de-projet", name: "Finances de projet", isFinance: false },
   { slug: "leadership", name: "Leadership", isFinance: false },
 ];
 
 /** Métadonnées des 6 articles de départ (le texte intégral arrive en phase 5). */
 export const articles: ArticleMeta[] = [
+  {
+    slug: "investir-en-bourse-les-bases",
+    title: "Investir en bourse : les bases, sans jargon",
+    excerpt: "Action, indice, ETF, horizon, frais, enveloppes : comprendre la bourse comme un système, et simuler un investissement programmé.",
+    category: "bourse",
+    readingMinutes: 7,
+    publishedAt: "2026-11-19",
+    cover: "growth",
+  },
+  {
+    slug: "investissement-locatif-calculer-la-rentabilite",
+    title: "Investissement locatif : calculer la vraie rentabilité",
+    excerpt: "Rendement brut, rendement net, cash-flow, risques : la méthode pour juger un bien comme un projet, avec simulateur.",
+    category: "immobilier",
+    readingMinutes: 7,
+    publishedAt: "2026-11-19",
+    cover: "budget",
+  },
   {
     slug: "comment-fonctionne-l-impot-sur-le-revenu",
     title: "Comment fonctionne l’impôt sur le revenu en France",

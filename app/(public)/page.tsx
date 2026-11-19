@@ -7,6 +7,7 @@ import { Ticker } from "@/components/sections/ticker";
 import { Expertises } from "@/components/sections/expertises";
 import { Translator } from "@/components/sections/translator";
 import { ToolsTeaser } from "@/components/sections/tools-teaser";
+import { MarketsSection } from "@/components/sections/markets";
 import { RecentArticles } from "@/components/sections/recent-articles";
 import { Pmp } from "@/components/sections/pmp";
 import { BooksSection } from "@/components/sections/books";
@@ -33,6 +34,7 @@ export default async function Home() {
       <Ticker words={content.ticker} />
       <Expertises content={content.expertises} />
       <Translator content={content.translator} />
+      <MarketsSection />
       <ToolsTeaser content={content.tools} />
       <Pmp content={content.pmp} />
       <Testimonials content={content.testimonials} items={testimonials} />

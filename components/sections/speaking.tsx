@@ -36,7 +36,7 @@ export function Speaking({ content }: { content: HomeContent["speaking"] }) {
             </button>
           ))}
         </div>
-        <div role="tabpanel" id={`${uid}-panel`} aria-labelledby={`${uid}-${active}`} className="mt-6 rounded-[20px] border border-line bg-cloud p-7 sm:p-10">
+        <div role="tabpanel" id={`${uid}-panel`} aria-labelledby={`${uid}-${active}`} className="mt-6 rounded-md border border-line bg-cloud p-7 sm:p-10">
           <AnimatePresence mode="wait" initial={false}>
             <motion.div
               key={tab.key}

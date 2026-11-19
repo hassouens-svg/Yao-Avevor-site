@@ -21,7 +21,7 @@ export function Pmp({ content }: { content: HomeContent["pmp"] }) {
           <p className="mt-5 max-w-xl text-lead text-muted">{content.text}</p>
           <ul className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
             {content.chips.map((c) => (
-              <li key={c.label} className="rounded-[14px] border border-line bg-white p-4">
+              <li key={c.label} className="rounded-md border border-line bg-white p-4">
                 <p className="display text-[1.75rem] text-navy-deep">{c.value}</p>
                 <p className="mt-1.5 text-xs leading-snug text-muted">{c.label}</p>
               </li>
@@ -35,7 +35,7 @@ export function Pmp({ content }: { content: HomeContent["pmp"] }) {
           </div>
         </div>
         <div className="lg:col-span-5 lg:col-start-8">
-          <Tilt className="relative aspect-[4/5] overflow-hidden rounded-[28px] bg-[linear-gradient(165deg,#ffffff,#dcebf8)]">
+          <Tilt className="relative aspect-[4/5] overflow-hidden rounded-md bg-[linear-gradient(165deg,#ffffff,#dcebf8)]">
             <Image src={portrait} alt="Yao AVEVOR, formateur PMP®" fill sizes="(min-width:1024px) 40vw, 90vw" className="object-contain object-bottom" />
             <Image
               src="/logos/pmp-woloyem.png"

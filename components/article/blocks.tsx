@@ -26,7 +26,7 @@ export function Callout({
 /** Bandeau obligatoire des articles finance. */
 export function FinanceDisclaimer() {
   return (
-    <p className="not-prose rounded-[12px] border border-line bg-cloud px-5 py-3 text-sm text-muted">
+    <p className="not-prose rounded-md border border-line bg-cloud px-5 py-3 text-sm text-muted">
       <strong className="text-navy-deep">Contenu pédagogique</strong> — ne constitue pas un conseil financier ou fiscal personnalisé. Règles et taux à vérifier sur service-public.fr, impots.gouv.fr et urssaf.fr.
     </p>
   );

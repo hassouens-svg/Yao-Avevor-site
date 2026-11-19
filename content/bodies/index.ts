@@ -7,6 +7,8 @@ import PmpErreurs from "./pmp-erreurs";
 import BudgetProjet from "./budget-projet";
 import FondsUrgence from "./fonds-urgence";
 import BrutNet from "./brut-net";
+import Bourse from "./bourse";
+import Immobilier from "./immobilier";
 
 /** Corps des articles rédigés. Phase Appwrite : remplacés par le contenu stocké en base, éditable dans l'admin. */
 export const bodies: Record<string, ComponentType> = {
@@ -18,4 +20,6 @@ export const bodies: Record<string, ComponentType> = {
   "gerer-son-budget-comme-un-projet": BudgetProjet,
   "le-fonds-d-urgence": FondsUrgence,
   "brut-net-net-imposable": BrutNet,
+  "investir-en-bourse-les-bases": Bourse,
+  "investissement-locatif-calculer-la-rentabilite": Immobilier,
 };

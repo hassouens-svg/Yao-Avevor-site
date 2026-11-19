@@ -52,7 +52,7 @@ export default function OutilsPage() {
       <div className="bg-white pb-24">
         <div className="container-site space-y-6">
           {tools.map((t, i) => (
-            <section key={t.id} id={t.id} aria-labelledby={`${t.id}-titre`} className="scroll-mt-28 rounded-[24px] border border-line bg-cloud/60 p-6 sm:p-10 lg:p-12">
+            <section key={t.id} id={t.id} aria-labelledby={`${t.id}-titre`} className="scroll-mt-28 rounded-md border border-line bg-cloud/60 p-6 sm:p-10 lg:p-12">
               <div className="mb-10 flex flex-wrap items-end justify-between gap-4">
                 <div>
                   <p className="label-caps text-blue">

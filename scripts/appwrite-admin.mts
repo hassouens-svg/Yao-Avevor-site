@@ -57,3 +57,14 @@ if (cmd === "create-admin") {
   } else console.log("• déjà dans l'équipe admins");
   console.log(`IDENTIFIANTS ${email} ${password}`);
 }
+
+if (cmd === "add-missing-articles") {
+  const { articles } = await import("../content/articles.ts");
+  const existing = await db.listRows({ databaseId: "site", tableId: "articles", queries: [Query.limit(500)] });
+  const slugs = new Set(existing.rows.map((r) => (r as unknown as { slug: string }).slug));
+  for (const a of articles) {
+    if (slugs.has(a.slug)) continue;
+    await db.createRow({ databaseId: "site", tableId: "articles", rowId: ID.unique(), data: { ...a, coverImage: "", body: "", published: true } });
+    console.log("• article ajouté", a.slug);
+  }
+}

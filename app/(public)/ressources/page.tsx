@@ -24,7 +24,7 @@ export default async function RessourcesPage() {
           <SectionHeader label="Lexique" title="La fiche de paie en clair." intro="Douze termes que tout salarié devrait comprendre. Définitions simplifiées, à visée pédagogique." />
           <dl className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {lexicon.map((t, i) => (
-              <div key={t.term} className="rounded-[20px] border border-line bg-cloud p-6">
+              <div key={t.term} className="rounded-md border border-line bg-cloud p-6">
                 <dt className="flex items-baseline gap-3">
                   <span className="label-caps tabular text-blue">{String(i + 1).padStart(2, "0")}</span>
                   <span className="text-[1.25rem] font-bold text-navy-deep">{t.term}</span>
@@ -48,7 +48,7 @@ export default async function RessourcesPage() {
           <ul className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {content.tools.chips.map((c, i) => (
               <li key={c.href}>
-                <Link href={c.href} className={`group flex h-full min-h-40 flex-col justify-between rounded-[20px] p-6 transition-transform duration-500 hover:-translate-y-1 ${colors[i % colors.length]}`}>
+                <Link href={c.href} className={`group flex h-full min-h-40 flex-col justify-between rounded-md p-6 transition-transform duration-500 hover:-translate-y-1 ${colors[i % colors.length]}`}>
                   <span className="label-caps opacity-75">Simulateur {String(i + 1).padStart(2, "0")}</span>
                   <span className="flex items-end justify-between gap-3 text-[1.375rem] font-bold">
                     {c.label}

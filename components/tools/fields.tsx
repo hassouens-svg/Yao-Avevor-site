@@ -68,7 +68,7 @@ export function ResultTile({ label, value, accent, tone = "light" }: { label: st
   return (
     <div
       className={cn(
-        "rounded-[14px] border p-4",
+        "rounded-md border p-4",
         tone === "dark" ? "border-white/12 bg-white/[0.04]" : "border-line bg-white",
         accent && (tone === "dark" ? "border-sky/50 bg-sky/10" : "border-blue/30 bg-sky-soft"),
       )}

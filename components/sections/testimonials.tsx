@@ -27,7 +27,7 @@ export function Testimonials({ content, items, hideHeader = false }: { content: 
           {quotes.map((t, i) => {
             const dark = i % 4 === 0 || i % 4 === 3;
             return (
-              <Tilt key={t.name} max={4} className={cn("flex flex-col justify-between rounded-[20px] p-8 sm:p-10", dark ? "bg-navy-deep text-white" : "bg-sky-soft text-navy-deep")}>
+              <Tilt key={t.name} max={4} className={cn("flex flex-col justify-between rounded-md p-8 sm:p-10", dark ? "bg-navy-deep text-white" : "bg-sky-soft text-navy-deep")}>
                 <figure>
                   <span aria-hidden="true" className={cn("display block text-5xl leading-none", dark ? "text-sky" : "text-blue")}>
                     “

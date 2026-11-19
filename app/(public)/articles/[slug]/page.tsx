@@ -71,7 +71,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
               <span>{article.readingMinutes} min de lecture</span>
             </div>
           </div>
-          <div className="relative mt-12 aspect-[21/9] overflow-hidden rounded-[24px]">
+          <div className="relative mt-12 aspect-[21/9] overflow-hidden rounded-md">
             {article.coverImage ? (
               <Image src={article.coverImage} alt="" fill priority sizes="100vw" className="object-cover" unoptimized />
             ) : (
@@ -94,7 +94,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
           ) : Body ? (
             <Body />
           ) : (
-            <div className="not-prose rounded-[20px] border border-line bg-cloud p-10">
+            <div className="not-prose rounded-md border border-line bg-cloud p-10">
               <p className="label-caps text-blue">En préparation</p>
               <p className="mt-4 text-[1.5rem] font-bold text-navy-deep">Cet article est en cours de rédaction.</p>
               <p className="mt-3 text-muted">Inscrivez-vous à la newsletter pour être prévenu(e) de sa publication.</p>
@@ -104,7 +104,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
             </div>
           )}
 
-          <div className="not-prose mt-16 flex flex-col gap-6 rounded-[20px] bg-navy-deep p-8 text-white sm:flex-row sm:items-center">
+          <div className="not-prose mt-16 flex flex-col gap-6 rounded-md bg-navy-deep p-8 text-white sm:flex-row sm:items-center">
             <span className="relative size-20 shrink-0 overflow-hidden rounded-full bg-sky-soft">
               <Image src={portrait} alt="Yao AVEVOR" fill sizes="80px" className="object-cover object-top" />
             </span>

@@ -54,7 +54,7 @@ function Gauge({ label, value }: { label: string; value: number }) {
   const ok = value >= 1;
   const w = Math.min(100, (value / 1.5) * 100);
   return (
-    <div className="rounded-[14px] border border-line bg-white p-4">
+    <div className="rounded-md border border-line bg-white p-4">
       <div className="flex items-baseline justify-between">
         <p className="text-xs text-muted">{label}</p>
         <p className={cn("tabular font-mono text-xl font-bold", ok ? "text-blue" : "text-[#9b1c1c]")}>{num(value)}</p>
@@ -157,7 +157,7 @@ export function BudgetSimulator() {
         <p className="text-xs text-muted">La règle 50/30/20 est un point de départ, pas une loi : ajustez-la à votre situation et à vos objectifs.</p>
       </div>
       <div className="lg:col-span-7" aria-live="polite">
-        <div className="flex h-14 overflow-hidden rounded-[14px]">
+        <div className="flex h-14 overflow-hidden rounded-md">
           {parts.map((p) => (
             <div key={p.label} className={cn("flex items-center justify-center text-sm font-semibold", p.cls, p.cls === "bg-sky" ? "text-navy-deep" : "text-white")} style={{ width: `${p.pct}%` }}>
               {p.pct} %
@@ -166,7 +166,7 @@ export function BudgetSimulator() {
         </div>
         <ul className="mt-5 grid gap-3 sm:grid-cols-3">
           {parts.map((p) => (
-            <li key={p.label} className="rounded-[14px] border border-line bg-white p-4">
+            <li key={p.label} className="rounded-md border border-line bg-white p-4">
               <p className="text-sm font-semibold text-navy-deep">{p.label}</p>
               <p className="tabular mt-1 font-mono text-xl font-bold text-navy-deep">{eur(p.value)}</p>
               <p className="mt-1.5 text-xs text-muted">{p.sub}</p>
@@ -199,7 +199,7 @@ export function LoanSimulator() {
           <ResultTile label="Coût des intérêts" value={eur(r.interest)} />
           <ResultTile label="Total remboursé" value={eur(r.total)} />
         </div>
-        <div className="mt-8 flex h-12 overflow-hidden rounded-[14px] text-sm font-semibold">
+        <div className="mt-8 flex h-12 overflow-hidden rounded-md text-sm font-semibold">
           <div className="flex items-center justify-center bg-navy-deep text-white" style={{ width: `${(1 - share) * 100}%` }}>Capital</div>
           <div className="flex items-center justify-center bg-sky text-navy-deep" style={{ width: `${share * 100}%`, minWidth: share > 0 ? "4.5rem" : 0 }}>Intérêts</div>
         </div>

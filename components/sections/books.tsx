@@ -15,7 +15,7 @@ export function BooksSection({ content, books, headingLevel = "h2" }: { content:
         ) : null}
         <ul className={headingLevel === "h2" ? "mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-3" : "grid gap-8 md:grid-cols-2 lg:grid-cols-3"}>
           {books.map((b) => (
-            <li key={b.slug} className="group relative flex flex-col overflow-hidden rounded-[28px] bg-[linear-gradient(160deg,#eaf5fd,#dcebf8)]">
+            <li key={b.slug} className="group relative flex flex-col overflow-hidden rounded-md bg-[linear-gradient(160deg,#eaf5fd,#dcebf8)]">
               <span className="label-caps absolute top-5 left-5 z-10 inline-flex items-center gap-2 rounded-full bg-white px-3 py-1.5 text-navy-deep shadow-soft">
                 <span className="size-2 animate-pulse rounded-full bg-blue-bright motion-reduce:animate-none" />
                 {b.statusLabel}
@@ -34,11 +34,11 @@ export function BooksSection({ content, books, headingLevel = "h2" }: { content:
               </div>
             </li>
           ))}
-          <li className="flex flex-col justify-center rounded-[28px] bg-navy-deep p-8 text-white">
+          <li className="flex flex-col justify-center rounded-md bg-navy-deep p-8 text-white">
             <p className="label-caps text-sky">— Sorties</p>
             <h3 className="mt-4 text-[1.5rem]">{content.waitlistTitle}</h3>
             <p className="mt-2 text-sm text-mist">{content.waitlistText}</p>
-            <div className="mt-2 rounded-[16px] bg-white p-5 text-ink">
+            <div className="mt-2 rounded-md bg-white p-5 text-ink">
               <WaitlistForm />
             </div>
           </li>

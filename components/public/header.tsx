@@ -66,7 +66,7 @@ export function Header() {
           </Link>
 
           <nav aria-label="Navigation principale" className="hidden lg:block">
-            <ul className="flex items-center gap-8 text-[0.875rem] font-medium">
+            <ul className="flex items-center gap-6 text-[0.875rem] font-medium xl:gap-8">
               {mainNav.map((item) => {
                 const active = pathname === item.href || pathname.startsWith(item.href + "/");
                 return (

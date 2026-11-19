@@ -182,3 +182,53 @@ export const pct = (n: number, digits = 1) =>
   new Intl.NumberFormat("fr-FR", { style: "percent", maximumFractionDigits: digits, minimumFractionDigits: digits }).format(n);
 export const num = (n: number, digits = 2) =>
   new Intl.NumberFormat("fr-FR", { maximumFractionDigits: digits, minimumFractionDigits: digits }).format(n);
+
+/* ───────────── Investissement programmé (DCA) ───────────── */
+export type DcaInput = { initial: number; monthly: number; ratePct: number; feesPct: number; inflationPct: number; years: number };
+
+export function dca({ initial, monthly, ratePct, feesPct, inflationPct, years }: DcaInput) {
+  const months = Math.round(years * 12);
+  const gross = (ratePct / 100) / 12;
+  const net = ((ratePct - feesPct) / 100) / 12;
+  let vGross = initial, vNet = initial, invested = initial;
+  const series: { year: number; invested: number; value: number }[] = [{ year: 0, invested, value: vNet }];
+  for (let m = 1; m <= months; m++) {
+    vGross = vGross * (1 + gross) + monthly;
+    vNet = vNet * (1 + net) + monthly;
+    invested += monthly;
+    if (m % 12 === 0) series.push({ year: m / 12, invested, value: vNet });
+  }
+  const real = vNet / Math.pow(1 + inflationPct / 100, years);
+  return { invested, final: vNet, finalNoFees: vGross, feesCost: vGross - vNet, real, gain: vNet - invested, series };
+}
+
+/* ───────────── Investissement locatif ───────────── */
+export type RentalInput = {
+  price: number;
+  notaryPct: number;
+  works: number;
+  rent: number;
+  charges: number;
+  propertyTax: number;
+  vacancyPct: number;
+  downPayment: number;
+  loanRatePct: number;
+  loanYears: number;
+};
+
+export function rental(i: RentalInput) {
+  const total = i.price * (1 + i.notaryPct / 100) + i.works;
+  const annualRent = i.rent * 12;
+  const netIncome = annualRent * (1 - i.vacancyPct / 100) - i.charges * 12 - i.propertyTax;
+  const borrowed = Math.max(0, total - i.downPayment);
+  const loan = borrowed > 0 ? loanPayment(borrowed, i.loanRatePct, i.loanYears) : { monthly: 0, total: 0, interest: 0 };
+  return {
+    total,
+    grossYield: total > 0 ? annualRent / total : 0,
+    netYield: total > 0 ? netIncome / total : 0,
+    borrowed,
+    monthlyLoan: loan.monthly,
+    cashflow: netIncome / 12 - loan.monthly,
+    loanInterest: loan.interest,
+  };
+}

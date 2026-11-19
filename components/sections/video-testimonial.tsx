@@ -19,7 +19,7 @@ export function VideoTestimonial({ item }: { item: Testimonial }) {
 
   return (
     <figure>
-      <div className="relative aspect-square overflow-hidden rounded-[20px] bg-navy shadow-lift">
+      <div className="relative aspect-square overflow-hidden rounded-md bg-navy shadow-lift">
         {playing ? (
           embed ? (
             <iframe

@@ -8,7 +8,7 @@ export function Coaching({ content }: { content: HomeContent["coaching"] }) {
   return (
     <section id="accompagnement" className="bg-white py-[clamp(4rem,8vw,7rem)]">
       <div className="container-site">
-        <div className="grid overflow-hidden rounded-[28px] lg:grid-cols-2">
+        <div className="grid overflow-hidden rounded-md lg:grid-cols-2">
           <div className="relative min-h-[22rem] bg-[linear-gradient(160deg,#eef4fb,#dcebf8)]">
             <Image src={portrait} alt="Yao AVEVOR" fill sizes="(min-width:1024px) 50vw, 100vw" className="object-contain object-bottom" />
           </div>
@@ -18,7 +18,7 @@ export function Coaching({ content }: { content: HomeContent["coaching"] }) {
             <p className="mt-5 max-w-lg text-mist">{content.text}</p>
             <div className="mt-8 grid gap-3 sm:grid-cols-2">
               {content.options.map((o) => (
-                <div key={o.title} className="rounded-[14px] border border-white/12 bg-white/[0.04] p-5">
+                <div key={o.title} className="rounded-md border border-white/12 bg-white/[0.04] p-5">
                   <h3 className="text-base text-white">{o.title}</h3>
                   <p className="mt-2 text-sm text-mist">{o.text}</p>
                 </div>

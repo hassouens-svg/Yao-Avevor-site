@@ -14,7 +14,7 @@ export function Profile({ content, full = false }: { content: HomeContent["profi
       <div className="container-site grid gap-12 lg:grid-cols-12 lg:gap-10">
         <div className="lg:col-span-5">
           <SectionHeader label={content.label} title={content.title} />
-          <Tilt className="relative mt-10 aspect-[4/5] max-w-md overflow-hidden rounded-[28px] bg-[linear-gradient(160deg,#1d4f91,#0b1f3a)]">
+          <Tilt className="relative mt-10 aspect-[4/5] max-w-md overflow-hidden rounded-md bg-[linear-gradient(160deg,#1d4f91,#0b1f3a)]">
             <Image src="/images/banner/usine.jpg" alt="" fill sizes="40vw" className="object-cover opacity-40 mix-blend-luminosity blur-[2px]" />
             <Image src={portrait} alt="Yao AVEVOR" fill sizes="(min-width:1024px) 35vw, 90vw" className="object-contain object-bottom" />
           </Tilt>

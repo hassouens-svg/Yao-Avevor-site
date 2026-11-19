@@ -27,7 +27,7 @@ export function Translator({ content }: { content: HomeContent["translator"] }) 
   return (
     <section id="traducteur" className="bg-white py-[clamp(4rem,8vw,7rem)]">
       <div className="container-site">
-        <div className="rounded-[24px] border border-line bg-white p-6 shadow-soft sm:p-10 lg:p-14">
+        <div className="rounded-md border border-line bg-white p-6 shadow-soft sm:p-10 lg:p-14">
           <div className="border-l-4 border-navy-deep pl-5 sm:pl-8">
             <div className="flex flex-wrap items-end justify-between gap-4">
               <div>
@@ -70,7 +70,7 @@ export function Translator({ content }: { content: HomeContent["translator"] }) 
               ))}
             </div>
 
-            <div role="tabpanel" id={`${uid}-p`} aria-labelledby={`${uid}-t${active}`} className="mt-8 rounded-[16px] border border-line bg-cloud p-6 sm:p-10">
+            <div role="tabpanel" id={`${uid}-p`} aria-labelledby={`${uid}-t${active}`} className="mt-8 rounded-md border border-line bg-cloud p-6 sm:p-10">
               <AnimatePresence mode="wait" initial={false}>
                 <motion.div
                   key={active}

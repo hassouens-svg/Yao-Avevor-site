@@ -75,7 +75,7 @@ export function TaxSimulator() {
             })}
           </ul>
           {(r.decote > 0 || r.qfCapped) && (
-            <div className="mt-5 space-y-1.5 rounded-[12px] bg-sky-soft p-4 text-sm text-navy-deep">
+            <div className="mt-5 space-y-1.5 rounded-md bg-sky-soft p-4 text-sm text-navy-deep">
               {r.decote > 0 && <p>Décote appliquée : −{eur(r.decote)} (mécanisme qui allège l’impôt des revenus modestes).</p>}
               {r.qfCapped && <p>Plafonnement du quotient familial : l’avantage lié aux enfants est limité à {eur(IR_PARAMS.qfCapPerHalfShare)} par demi-part.</p>}
             </div>

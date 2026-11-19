@@ -82,7 +82,7 @@ export function FloatingCards({ className }: { className?: string }) {
             }
           >
             <div
-              className="overflow-hidden rounded-[18px] shadow-[0_20px_50px_-12px_rgba(11,31,58,0.45)] motion-safe:animate-[bookfloat_7s_ease-in-out_infinite] md:rounded-[22px]"
+              className="overflow-hidden rounded-md shadow-[0_20px_50px_-12px_rgba(11,31,58,0.45)] motion-safe:animate-[bookfloat_7s_ease-in-out_infinite] md:rounded-md"
               style={{ animationDelay: `${i * -1.3}s`, filter: `blur(${blur}px) saturate(1.15)`, opacity: 0.55 + c.depth * 0.4 }}
             >
               <Image src={c.src} alt={c.alt} width={c.w} height={c.h} sizes="30vw" className="block h-auto w-full" />
