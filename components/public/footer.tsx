@@ -38,7 +38,7 @@ export function Footer() {
               <ul className="mt-5 space-y-3 text-sm">
                 {footerNav.explorer.map((l) => (
                   <li key={l.href}>
-                    <Link href={l.href} className="text-white/75 transition-colors hover:text-white">{l.label}</Link>
+                    <Link href={l.href} {...(l.href.startsWith("http") ? { target: "_blank", rel: "noopener noreferrer" } : {})} className="text-white/75 transition-colors hover:text-white">{l.label}</Link>
                   </li>
                 ))}
               </ul>
@@ -48,7 +48,7 @@ export function Footer() {
               <ul className="mt-5 space-y-3 text-sm">
                 {themes.map((l) => (
                   <li key={l.href}>
-                    <Link href={l.href} className="text-white/75 transition-colors hover:text-white">{l.label}</Link>
+                    <Link href={l.href} {...(l.href.startsWith("http") ? { target: "_blank", rel: "noopener noreferrer" } : {})} className="text-white/75 transition-colors hover:text-white">{l.label}</Link>
                   </li>
                 ))}
               </ul>
@@ -58,7 +58,7 @@ export function Footer() {
               <ul className="mt-5 space-y-3 text-sm">
                 {footerNav.legal.map((l) => (
                   <li key={l.href}>
-                    <Link href={l.href} className="text-white/75 transition-colors hover:text-white">{l.label}</Link>
+                    <Link href={l.href} {...(l.href.startsWith("http") ? { target: "_blank", rel: "noopener noreferrer" } : {})} className="text-white/75 transition-colors hover:text-white">{l.label}</Link>
                   </li>
                 ))}
                 <li className="text-mist">{site.location}</li>

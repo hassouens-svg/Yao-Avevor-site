@@ -21,7 +21,7 @@ export function BooksSection({ content, books, headingLevel = "h2" }: { content:
                 {b.statusLabel}
               </span>
               <div className="flex justify-center pt-16 pb-6">
-                <Book3D title={b.title} subtitle={b.subtitle} />
+                <Book3D title={b.title} subtitle={b.subtitle} cover={b.cover} />
               </div>
               <div className="mt-auto bg-white/70 p-6 backdrop-blur">
                 <h3 className="text-[1.375rem] text-navy-deep">{b.title}</h3>

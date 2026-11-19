@@ -73,6 +73,7 @@ export function Header() {
                   <li key={item.href}>
                     <Link
                       href={item.href}
+                      {...(item.href.startsWith("http") ? { target: "_blank", rel: "noopener noreferrer" } : {})}
                       aria-current={active ? "page" : undefined}
                       className={cn("link-underline pb-1", active && "bg-[length:100%_1px]")}
                     >

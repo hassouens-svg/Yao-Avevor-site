@@ -9,7 +9,7 @@ import { Monogram } from "@/components/public/monogram";
  * Pivote selon la souris (tilt) ; un reflet lumineux balaie la couverture.
  * Remplaçable par la vraie couverture depuis l'admin (phase 6).
  */
-export function Book3D({ title, subtitle }: { title: string; subtitle: string }) {
+export function Book3D({ title, subtitle, cover }: { title: string; subtitle: string; cover?: string }) {
   const book = useRef<HTMLDivElement>(null);
   const glare = useRef<HTMLDivElement>(null);
 
@@ -55,6 +55,10 @@ export function Book3D({ title, subtitle }: { title: string; subtitle: string })
       >
         {/* Face avant */}
         <div className="absolute inset-0 overflow-hidden rounded-r-[6px] rounded-l-[2px] bg-navy [backface-visibility:hidden] [transform:translateZ(calc(34px/2))]">
+          {cover && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={cover} alt="" className="absolute inset-0 z-[1] size-full object-cover" />
+          )}
           <div className="absolute inset-0 bg-[radial-gradient(120%_80%_at_80%_10%,rgb(140_200_240/0.28),transparent_60%)]" />
           <div className="absolute inset-y-0 left-0 w-3 bg-gradient-to-r from-black/35 via-white/10 to-transparent" />
           <div className="relative flex h-full flex-col justify-between p-[9%] text-white">

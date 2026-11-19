@@ -1,17 +1,22 @@
 import Link from "next/link";
 import type { ArticleMeta } from "@/lib/content/types";
 import { categoryName } from "@/content/articles";
+import Image from "next/image";
 import { ArticleCover } from "./article-cover";
 
 const dateFmt = new Intl.DateTimeFormat("fr-FR", { day: "numeric", month: "long", year: "numeric" });
 
 /** Carte d'article : zoom image subtil + soulignement animé du titre au survol. */
-export function ArticleCard({ article, priority = false }: { article: ArticleMeta; priority?: boolean }) {
+export function ArticleCard({ article, priority = false }: { article: ArticleMeta & { coverImage?: string }; priority?: boolean }) {
   return (
     <article className="group relative flex flex-col">
       <div className="relative aspect-[16/10] overflow-hidden rounded-[var(--radius-md)]">
-        <div className="h-full w-full transition-transform duration-[1.2s] ease-[var(--ease-out-expo)] group-hover:scale-[1.04]">
-          <ArticleCover motif={article.cover} />
+        <div className="relative h-full w-full transition-transform duration-[1.2s] ease-[var(--ease-out-expo)] group-hover:scale-[1.04]">
+          {article.coverImage ? (
+            <Image src={article.coverImage} alt="" fill sizes="(min-width:1024px) 33vw, 100vw" className="object-cover" unoptimized />
+          ) : (
+            <ArticleCover motif={article.cover} />
+          )}
         </div>
         <span className="absolute top-4 left-4 rounded-full bg-white/90 px-3 py-1 text-xs font-medium text-navy backdrop-blur">
           {categoryName(article.category)}

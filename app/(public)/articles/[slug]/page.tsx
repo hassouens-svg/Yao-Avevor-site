@@ -12,6 +12,7 @@ import { ReadingProgress, ShareBar, Toc } from "@/components/article/parts";
 import { Button } from "@/components/public/button";
 import { site } from "@/lib/site";
 import portrait from "@/public/images/portrait-cutout.png";
+import { marked } from "marked";
 
 const dateFmt = new Intl.DateTimeFormat("fr-FR", { day: "numeric", month: "long", year: "numeric" });
 
@@ -70,8 +71,12 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
               <span>{article.readingMinutes} min de lecture</span>
             </div>
           </div>
-          <div className="mt-12 aspect-[21/9] overflow-hidden rounded-[24px]">
-            <ArticleCover motif={article.cover} />
+          <div className="relative mt-12 aspect-[21/9] overflow-hidden rounded-[24px]">
+            {article.coverImage ? (
+              <Image src={article.coverImage} alt="" fill priority sizes="100vw" className="object-cover" unoptimized />
+            ) : (
+              <ArticleCover motif={article.cover} />
+            )}
           </div>
         </div>
       </header>
@@ -84,7 +89,9 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
           </div>
         </aside>
         <div id="article-body" className="prose-ya min-w-0 lg:col-span-8 lg:col-start-5">
-          {Body ? (
+          {article.body ? (
+            <div dangerouslySetInnerHTML={{ __html: marked.parse(article.body, { async: false }) as string }} />
+          ) : Body ? (
             <Body />
           ) : (
             <div className="not-prose rounded-[20px] border border-line bg-cloud p-10">

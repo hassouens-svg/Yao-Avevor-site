@@ -10,7 +10,6 @@ import { ToolsTeaser } from "@/components/sections/tools-teaser";
 import { RecentArticles } from "@/components/sections/recent-articles";
 import { Pmp } from "@/components/sections/pmp";
 import { BooksSection } from "@/components/sections/books";
-import { Profile } from "@/components/sections/profile";
 import { Coaching } from "@/components/sections/coaching";
 import { Speaking } from "@/components/sections/speaking";
 import { Testimonials } from "@/components/sections/testimonials";
@@ -29,7 +28,6 @@ export default async function Home() {
     <>
       <Hero content={content.hero} />
       <Trust content={content.trust} />
-      <Profile content={content.profile} />
       <Stats stats={content.stats} />
       <Bento content={content.bento} />
       <Ticker words={content.ticker} />

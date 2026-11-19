@@ -15,7 +15,7 @@ export const site = {
 
 export const mainNav = [
   { href: "/a-propos", label: "À propos" },
-  { href: "/formations", label: "Formations" },
+  { href: "https://www.woloyem.com/", label: "Formations" },
   { href: "/articles", label: "Articles" },
   { href: "/outils", label: "Simulateurs" },
   { href: "/livres", label: "Livres" },
@@ -26,7 +26,7 @@ export const footerNav = {
     { href: "/a-propos", label: "À propos" },
     { href: "/articles", label: "Articles" },
     { href: "/livres", label: "Livres" },
-    { href: "/formations", label: "Formations & coaching" },
+    { href: "https://www.woloyem.com/", label: "Formations (Woloyem)" },
     { href: "/outils", label: "Simulateurs" },
     { href: "/ressources", label: "Ressources" },
     { href: "/temoignages", label: "Témoignages" },

@@ -57,6 +57,7 @@ export function MobileMenu({ open, onClose }: { open: boolean; onClose: () => vo
                   >
                     <Link
                       href={item.href}
+                      {...(item.href.startsWith("http") ? { target: "_blank", rel: "noopener noreferrer" } : {})}
                       ref={i === 0 ? firstLink : undefined}
                       onClick={onClose}
                       className="flex items-baseline gap-4 py-2 display text-[clamp(2.5rem,10vw,4rem)]"

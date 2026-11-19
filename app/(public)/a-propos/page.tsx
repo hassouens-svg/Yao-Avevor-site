@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
-import { getHomeContent } from "@/lib/content";
-import { certifications, timeline } from "@/content/timeline";
+import { getCertifications, getHomeContent, getTimeline } from "@/lib/content";
 import { PageHero } from "@/components/public/page-hero";
 import { SectionHeader } from "@/components/public/section-header";
 import { Profile } from "@/components/sections/profile";
@@ -15,7 +14,7 @@ export const metadata: Metadata = {
 };
 
 export default async function AProposPage() {
-  const content = await getHomeContent();
+  const [content, timeline, certifications] = await Promise.all([getHomeContent(), getTimeline(), getCertifications()]);
   return (
     <>
       <PageHero label="À propos" title="Du laboratoire à l’usine." intro="Une thèse sur l’usinage, l’aéronautique, puis l’industrie verrière. Partout, la même mission : rendre le complexe pilotable — et transmettre la méthode." />
@@ -44,7 +43,7 @@ export default async function AProposPage() {
           </ul>
           <div className="mt-12 flex flex-wrap gap-3">
             <Button href="/contact" className="bg-navy-deep hover:bg-blue">Me contacter</Button>
-            <Button href="/formations" variant="secondary">Voir les formations</Button>
+            <Button href="https://www.woloyem.com/" variant="secondary">Voir les formations</Button>
           </div>
         </div>
       </section>

@@ -1,12 +1,12 @@
 "use server";
 
 import { contactSchema, flattenErrors, subscribeSchema, type FormState } from "@/lib/validations/forms";
+import { createRow } from "@/lib/appwrite/rest";
 
 /**
  * Actions des formulaires publics.
- * Phase 3 : validation complète (Zod + honeypot), sans persistance.
- * Phase 4 : insertion Supabase (`subscribers`, `messages`) + rate limiting.
- * Phase 7 : emails Resend (double opt-in, notification de contact).
+ * Validation (Zod + honeypot), puis enregistrement dans Appwrite (tables `subscribers` et `messages`),
+ * consultables dans l'admin. Emails automatiques (double opt-in, notification) : étape suivante.
  */
 
 function isBot(formData: FormData) {
@@ -27,10 +27,21 @@ export async function subscribe(_prev: FormState, formData: FormData): Promise<F
     return { status: "error", message: "Merci de vérifier le formulaire.", fieldErrors: flattenErrors(parsed.error) };
   }
 
-  // TODO(phase 4/7) : enregistrer l'abonné (statut pending) et envoyer l'email de confirmation.
+  try {
+    const d = parsed.data;
+    await createRow("subscribers", {
+      email: d.email,
+      firstName: d.firstName ?? "",
+      segments: d.segments.join(","),
+      status: "confirmed",
+      consentAt: new Date().toISOString(),
+    });
+  } catch {
+    return { status: "error", message: "Un problème technique est survenu. Merci de réessayer dans un instant." };
+  }
   return {
     status: "success",
-    message: "Merci ! Vérifiez votre boîte mail pour confirmer votre inscription.",
+    message: "Merci ! Votre inscription est bien enregistrée.",
   };
 }
 
@@ -48,6 +59,11 @@ export async function sendContact(_prev: FormState, formData: FormData): Promise
     return { status: "error", message: "Merci de vérifier le formulaire.", fieldErrors: flattenErrors(parsed.error) };
   }
 
-  // TODO(phase 4/7) : enregistrer le message et notifier Yao par email.
+  try {
+    const d = parsed.data;
+    await createRow("messages", { name: d.name, email: d.email, reason: d.reason, message: d.message, status: "new" });
+  } catch {
+    return { status: "error", message: "Un problème technique est survenu. Merci de réessayer, ou écrivez directement à aveveyao@yahoo.com." };
+  }
   return { status: "success", message: "Merci, votre message est bien parti. Je vous réponds personnellement." };
 }

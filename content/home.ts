@@ -13,7 +13,7 @@ export const home: HomeContent = {
     subtitle:
       "Responsable R&D avec 9 ans d’expérience en environnement industriel, je pilote des activités de développement à l’interface entre simulation numérique, innovation produit et performance des procédés.",
     primaryCta: { label: "Me contacter", href: "/contact" },
-    secondaryCta: { label: "Préparer le PMP®", href: "/formations" },
+    secondaryCta: { label: "Préparer le PMP®", href: "https://www.woloyem.com/" },
     portraitAlt: "Yao AVEVOR, bras croisés, en costume bleu marine",
   },
 
@@ -141,7 +141,7 @@ export const home: HomeContent = {
         title: "Formation & certification PMP®",
         lead: "Préparer la certification PMP® avec un formateur agréé PMI : théorie, études de cas, mises en situation.",
         points: ["Bootcamps PMP® en français", "Coaching individuel", "Ateliers en entreprise", "Méthode d’examen"],
-        href: "/formations",
+        href: "https://www.woloyem.com/",
         cta: "Voir les formations",
         image: "/images/banner/management.jpg",
         tone: "blue",
@@ -211,8 +211,8 @@ export const home: HomeContent = {
       { value: "Live", label: "Sessions en direct, à distance" },
       { value: "FR", label: "Langue" },
     ],
-    cta: { label: "Rejoindre la prochaine cohorte", href: "/contact?motif=formation" },
-    note: "Inscriptions et tarifs : via Woloyem Academy.",
+    cta: { label: "Rejoindre la prochaine cohorte", href: "https://www.woloyem.com/" },
+    note: "Inscriptions, dates et tarifs sur woloyem.com.",
   },
 
   coaching: {

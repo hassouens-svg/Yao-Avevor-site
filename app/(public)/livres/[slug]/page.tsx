@@ -29,7 +29,7 @@ export default async function LivrePage({ params }: { params: Promise<{ slug: st
         </Link>
         <div className="mt-10 grid items-center gap-14 lg:grid-cols-12">
           <div className="flex justify-center rounded-[28px] bg-[linear-gradient(160deg,#eaf5fd,#dcebf8)] py-16 lg:col-span-5">
-            <Book3D title={book.title} subtitle={book.subtitle} />
+            <Book3D title={book.title} subtitle={book.subtitle} cover={book.cover} />
           </div>
           <div className="lg:col-span-6 lg:col-start-7">
             <p className="label-caps text-blue">{book.statusLabel}</p>
