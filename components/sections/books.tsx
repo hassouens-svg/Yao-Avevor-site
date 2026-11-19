@@ -8,12 +8,12 @@ import { WaitlistForm } from "./waitlist-form";
 /** Livres : une couverture 3D par livre (pivote sous la souris) + inscription aux sorties. */
 export function BooksSection({ content, books, headingLevel = "h2" }: { content: HomeContent["books"]; books: Book[]; headingLevel?: "h1" | "h2" }) {
   return (
-    <section id="livres" className="relative overflow-hidden bg-white py-[clamp(4rem,8vw,7rem)]">
+    <section id="livres" className={headingLevel === "h2" ? "relative overflow-hidden bg-white py-[clamp(4rem,8vw,7rem)]" : "relative overflow-hidden bg-white pb-24"}>
       <div className="container-site">
         {headingLevel === "h2" ? (
           <SectionHeader label={content.label} title={content.title} intro={content.intro} />
         ) : null}
-        <ul className="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+        <ul className={headingLevel === "h2" ? "mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-3" : "grid gap-8 md:grid-cols-2 lg:grid-cols-3"}>
           {books.map((b) => (
             <li key={b.slug} className="group relative flex flex-col overflow-hidden rounded-[28px] bg-[linear-gradient(160deg,#eaf5fd,#dcebf8)]">
               <span className="label-caps absolute top-5 left-5 z-10 inline-flex items-center gap-2 rounded-full bg-white px-3 py-1.5 text-navy-deep shadow-soft">

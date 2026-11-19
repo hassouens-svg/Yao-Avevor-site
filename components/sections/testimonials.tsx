@@ -5,7 +5,7 @@ import { Tilt } from "@/components/public/tilt";
 import { VideoTestimonial } from "./video-testimonial";
 
 /** Témoignages : grille de cartes alternées (marine / bleu ciel) + témoignages vidéo. */
-export function Testimonials({ content, items }: { content: HomeContent["testimonials"]; items: Testimonial[] }) {
+export function Testimonials({ content, items, hideHeader = false }: { content: HomeContent["testimonials"]; items: Testimonial[]; hideHeader?: boolean }) {
   const quotes = items.filter((t) => !t.videoUrl);
   const videos = items.filter((t) => t.videoUrl);
   if (!items.length) return null;
@@ -13,10 +13,10 @@ export function Testimonials({ content, items }: { content: HomeContent["testimo
   return (
     <section id="temoignages" className="bg-cloud py-[clamp(4rem,8vw,7rem)]">
       <div className="container-site">
-        <SectionHeader label={content.label} title={content.title} />
+        {!hideHeader && <SectionHeader label={content.label} title={content.title} />}
 
         {videos.length > 0 && (
-          <div className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+          <div className={cn("grid gap-5 md:grid-cols-2 lg:grid-cols-3", !hideHeader && "mt-12")}>
             {videos.map((v) => (
               <VideoTestimonial key={v.name} item={v} />
             ))}
