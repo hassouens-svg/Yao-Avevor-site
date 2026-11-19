@@ -30,7 +30,18 @@ Source principale : `_sources/linkedin.md` (profil LinkedIn relevé le 19/11/202
 - [ ] Extraits (remplacer les 3 `[EXTRAIT PROVISOIRE]`)
 
 ## Témoignages
-- [ ] Recommandations LinkedIn d'**Alpha Amadou Diallo** et de **Lyliane Sossou** : à publier **uniquement après leur accord** (texte, photo, intitulé de poste). Prêtes dans le seed, non publiées.
+- [x] Recommandations LinkedIn d'Alpha Amadou Diallo et de Lyliane Sossou : accord confirmé par le client (19/11/2026) → publiées
+- [ ] **Fichiers des témoignages vidéo** à fournir (MP4, ou liens YouTube/Vimeo) + nom, poste, accord de chaque personne
+- [ ] Photos des auteurs des témoignages (facultatif)
+
+## Fiscalité & paie (simulateurs, articles)
+- [ ] Barème de l'impôt 2026 (revenus 2025) utilisé : tranches 11 600 / 29 579 / 84 577 / 181 917 €, plafond QF 1 807 € par demi-part, décote 897 € / 1 483 € (seuils 1 982 / 3 277 €), abattement 10 % min 509 € / max 14 555 € → **à confirmer sur impots.gouv.fr** (paramètres centralisés dans `lib/finance/index.ts`)
+- [ ] Taux du bulletin de paie fictif (article « fiche de paie ») : taux indicatifs, à vérifier sur urssaf.fr
+- [ ] Taux moyens de cotisations du simulateur brut → net (22 % non-cadre, 25 % cadre, 15 % fonction publique) : ordres de grandeur
+
+## Visuels
+- [ ] **Photos haute définition** de Yao (hero, formation, conférence) : les photos actuelles font 400–500 px et sont floues en grand
+- [ ] Photos de formations / bootcamps / conférences pour enrichir la grille « parcours » et une future galerie
 
 ## Marques & mentions légales
 - [ ] Usage du badge PMI ATP et des marques PMP®, PMBOK®, PRINCE2®, ITIL® selon les règles d'usage des propriétaires

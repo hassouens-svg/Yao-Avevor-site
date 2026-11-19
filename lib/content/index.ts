@@ -35,3 +35,15 @@ export async function getTestimonials() {
 export async function getGallery() {
   return gallery;
 }
+
+export async function getArticle(slug: string) {
+  return articles.find((a) => a.slug === slug) ?? null;
+}
+
+export async function getRelatedArticles(slug: string, limit = 3) {
+  const current = articles.find((a) => a.slug === slug);
+  return [...articles]
+    .filter((a) => a.slug !== slug)
+    .sort((a, b) => Number(b.category === current?.category) - Number(a.category === current?.category) || b.publishedAt.localeCompare(a.publishedAt))
+    .slice(0, limit);
+}
