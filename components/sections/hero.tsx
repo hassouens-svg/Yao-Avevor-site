@@ -2,61 +2,82 @@ import Image from "next/image";
 import { Button } from "@/components/public/button";
 import { Reveal } from "@/components/public/reveal";
 import { SectionLabel } from "@/components/public/section-label";
-import { Hero3D } from "@/components/three/hero-3d";
 import type { HomeContent } from "@/lib/content/types";
 import portrait from "@/public/images/portrait-cutout.png";
 import { HeroMotion } from "./hero-motion";
+import { FloatingCards } from "./floating-cards";
 
-/** Hero clair : grand titre condensé, portrait détouré, objets en verre 3D qui suivent la souris. */
+const keywordColors = ["text-blue", "text-[#a87700]", "text-blue-bright", "text-[#c45a10]"];
+
+/**
+ * Hero : grande photo détourée en fond clair, illustrations de la bannière qui flottent en 3D (floues),
+ * texte superposé en bas avec un fondu blanc. Même composition sur mobile et sur ordinateur.
+ */
 export function Hero({ content }: { content: HomeContent["hero"] }) {
   return (
     <section
       id="hero"
-      className="relative isolate overflow-hidden bg-[radial-gradient(120%_90%_at_75%_30%,#eef4fb_0%,#ffffff_60%)] pt-[var(--header-h)]"
+      className="relative isolate flex min-h-[100svh] flex-col overflow-hidden bg-[radial-gradient(90%_70%_at_60%_35%,#e6f1fb_0%,#f7fafd_45%,#ffffff_75%)]"
     >
       <HeroMotion />
-      <Hero3D className="absolute inset-0 z-0" />
-      <div className="container-site relative grid min-h-[calc(100svh-var(--header-h))] items-center gap-6 lg:grid-cols-12">
-        {/* Texte */}
-        <div className="relative z-20 order-2 pb-14 lg:order-1 lg:col-span-7 lg:pb-0">
-          <SectionLabel>{content.label}</SectionLabel>
-          <h1 className="mt-6 display text-[clamp(3rem,5.6vw,6rem)] leading-[1.1] text-navy-deep">
-            <Reveal as="span" mode="lines" immediate delay={0.05} className="block">
-              {content.line1}
-            </Reveal>
-            <Reveal as="span" mode="lines" immediate delay={0.2} className="block text-blue">
-              {content.line2}
-            </Reveal>
-          </h1>
-          <Reveal as="p" immediate delay={0.5} className="mt-7 max-w-[34rem] text-lead text-muted">
-            {content.subtitle}
-          </Reveal>
-          <Reveal immediate delay={0.65} className="mt-9 flex flex-wrap gap-3">
-            <Button href={content.primaryCta.href} magnetic className="bg-navy-deep hover:bg-blue">
-              {content.primaryCta.label}
-            </Button>
-            <Button href={content.secondaryCta.href} variant="secondary" arrow={false}>
-              {content.secondaryCta.label}
-            </Button>
-          </Reveal>
-        </div>
 
-        {/* Portrait + 3D */}
-        <div className="relative order-1 h-[52svh] lg:order-2 lg:col-span-5 lg:h-[calc(100svh-var(--header-h))]">
-          <div
-            aria-hidden="true"
-            className="absolute bottom-0 left-1/2 z-0 aspect-square w-[78%] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgb(140_200_240/0.45),rgb(140_200_240/0)_70%)]"
-          />
-          <div data-hero-portrait className="absolute inset-x-0 bottom-0 z-10 flex h-full items-end justify-center will-change-transform">
-            <Image
-              src={portrait}
-              alt={content.portraitAlt}
-              priority
-              fetchPriority="high"
-              sizes="(min-width: 1024px) 45vw, 90vw"
-              className="h-[92%] w-auto max-w-none object-contain object-bottom drop-shadow-[0_30px_40px_rgba(11,31,58,0.18)]"
-            />
-          </div>
+      {/* Couche 3D : illustrations floues qui flottent */}
+      <FloatingCards className="absolute inset-0 z-0" />
+
+      {/* Portrait */}
+      <div
+        data-hero-portrait
+        className="relative z-10 mx-auto mt-[calc(var(--header-h)-0.5rem)] flex h-[56svh] w-full items-end justify-center will-change-transform md:absolute md:inset-x-0 md:top-0 md:bottom-0 md:mt-0 md:h-auto md:justify-end md:pr-[max(var(--gutter),calc((100vw-var(--container-site))/2+2vw))]"
+      >
+        <Image
+          src={portrait}
+          alt={content.portraitAlt}
+          priority
+          fetchPriority="high"
+          sizes="(min-width: 768px) 50vw, 100vw"
+          className="h-full w-auto max-w-none object-contain object-bottom md:h-[94%]"
+        />
+      </div>
+
+      {/* Fondu blanc qui fait monter le texte sur la photo */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 top-[calc(var(--header-h)+40svh)] bottom-0 z-10 bg-[linear-gradient(180deg,rgba(255,255,255,0)_0%,rgba(255,255,255,0.92)_14svh,#fff_20svh)] md:top-auto md:h-[22%] md:bg-[linear-gradient(180deg,rgba(255,255,255,0)_0%,#fff_100%)]"
+      />
+
+      {/* Texte */}
+      <div className="container-site relative z-20 -mt-[9svh] pb-12 md:mt-auto md:pt-[calc(var(--header-h)+2rem)] md:pb-16">
+        <div className="md:max-w-[52%]">
+        <SectionLabel>{content.label}</SectionLabel>
+        <h1 className="mt-5 display text-[clamp(2.5rem,11vw,3.75rem)] leading-[1.04] text-navy-deep md:text-[clamp(3.5rem,6.2vw,6.5rem)]">
+          <Reveal as="span" mode="lines" immediate delay={0.05} className="block">
+            {content.line1}
+          </Reveal>
+          <Reveal as="span" mode="lines" immediate delay={0.18} className="block text-blue">
+            {content.line2}
+          </Reveal>
+        </h1>
+        <Reveal immediate delay={0.4} className="mt-5">
+          <ul className="flex flex-wrap items-center gap-x-4 gap-y-2" aria-label="Domaines">
+            {content.keywords.map((k, i) => (
+              <li key={k} className="flex items-center gap-4">
+                {i > 0 && <span aria-hidden="true" className="size-1.5 rotate-45 bg-navy-deep/30" />}
+                <span className={`display text-[clamp(1.25rem,2.2vw,1.875rem)] ${keywordColors[i % keywordColors.length]}`}>{k}</span>
+              </li>
+            ))}
+          </ul>
+        </Reveal>
+        <Reveal as="p" immediate delay={0.55} className="mt-6 max-w-[36rem] text-[1.0625rem] leading-relaxed text-ink/75 sm:text-lead">
+          {content.subtitle}
+        </Reveal>
+        <Reveal immediate delay={0.7} className="mt-8 flex flex-wrap gap-3">
+          <Button href={content.primaryCta.href} magnetic className="bg-navy-deep hover:bg-blue">
+            {content.primaryCta.label}
+          </Button>
+          <Button href={content.secondaryCta.href} variant="secondary" arrow={false} className="bg-white/70 backdrop-blur">
+            {content.secondaryCta.label}
+          </Button>
+        </Reveal>
         </div>
       </div>
     </section>

@@ -7,12 +7,13 @@ import type { HomeContent } from "@/lib/content/types";
 export const home: HomeContent = {
   hero: {
     label: "Docteur-ingénieur · PMP® · Formateur PMI ATP",
-    line1: "Piloter l’innovation.",
-    line2: "Transmettre la méthode.",
+    line1: "Gestion de projets",
+    line2: "industriels.",
+    keywords: ["Conception", "Management", "Pilotage", "Innovation"],
     subtitle:
-      "Responsable R&D chez Verallia et formateur PMP® agréé PMI, je transforme des problèmes techniques complexes en projets qui aboutissent — et j’apprends aux autres à en faire autant.",
-    primaryCta: { label: "Préparer le PMP®", href: "/formations" },
-    secondaryCta: { label: "Lire les articles", href: "/articles" },
+      "Responsable R&D avec 9 ans d’expérience en environnement industriel, je pilote des activités de développement à l’interface entre simulation numérique, innovation produit et performance des procédés.",
+    primaryCta: { label: "Me contacter", href: "/contact" },
+    secondaryCta: { label: "Préparer le PMP®", href: "/formations" },
     portraitAlt: "Yao AVEVOR, bras croisés, en costume bleu marine",
   },
 
@@ -25,6 +26,20 @@ export const home: HomeContent = {
       { name: "Université de Lorraine", src: "/logos/universite-de-lorraine.svg", width: 322, height: 112, href: "https://www.univ-lorraine.fr" },
       { name: "CNRS", src: "/logos/cnrs.svg", width: 55, height: 55, href: "https://www.cnrs.fr" },
       { name: "PMP® — Project Management Professional", src: "/logos/pmp-woloyem.png", width: 340, height: 340 },
+    ],
+  },
+
+  profile: {
+    label: "Profil",
+    title: "Technique et business, R&D et terrain.",
+    email: "aveveyao@yahoo.com",
+    paragraphs: [
+      "Responsable R&D avec 9 ans d’expérience en environnement industriel, je pilote des activités de développement à l’interface entre simulation numérique, innovation produit et performance des procédés.",
+      "Docteur-Ingénieur en mécanique et matériaux et certifié PMP, je combine expertise technique, pilotage de projets complexes et management d’équipe dans des contextes industriels exigeants.",
+      "J’encadre des ingénieurs et structure les activités R&D avec un objectif clair : transformer des problématiques techniques en solutions robustes, industrialisables et créatrices de valeur (qualité, coûts, performance).",
+      "Mon positionnement est à l’interface entre technique et business, avec une forte capacité à connecter les enjeux R&D aux besoins opérationnels et industriels.",
+      "En parallèle de mes activités industrielles, j’interviens comme formateur ATP du PMI chez Woloyem Consulting. J’accompagne des professionnels dans le développement de leurs compétences en gestion de projet, l’appropriation des standards internationaux du PMI et la préparation à la certification PMP®, à travers des formations alliant théorie, études de cas et mises en situation.",
+      "Restons connectés pour échanger sur des projets industriels innovants et enrichissants !",
     ],
   },
 
@@ -49,7 +64,7 @@ export const home: HomeContent = {
         text: "Pilotage d’une activité R&D, management d’ingénieurs, optimisation et allègement des emballages en verre.",
         logo: "/logos/verallia.png",
         span: "wide",
-        tone: "white",
+        tone: "blue",
       },
       { kind: "figure", value: "6", label: "pays : France, Espagne, Italie, Allemagne, Brésil, Argentine", tone: "navy" },
       {
@@ -67,7 +82,7 @@ export const home: HomeContent = {
         title: "Formateur PMP® · PMI ATP",
         text: "Bootcamps de préparation à la certification PMP®, en français.",
         logo: "/logos/woloyem.png",
-        tone: "white",
+        tone: "teal",
       },
       {
         kind: "role",
@@ -77,7 +92,7 @@ export const home: HomeContent = {
         text: "Optimisation de la structure des cabines de l’Airbus A320 — équipe de 12 ingénieurs.",
         logo: "/logos/capgemini.svg",
         span: "wide",
-        tone: "white",
+        tone: "blue",
       },
       { kind: "figure", value: "Ph.D", label: "Génie mécanique & matériaux — Université de Lorraine, LEM3 (CNRS)", tone: "sky" },
       {
@@ -106,6 +121,7 @@ export const home: HomeContent = {
         points: ["Cadrage, planning, chemin critique", "Gestion des risques", "Agile, prédictif, hybride", "Gouvernance & rôle du sponsor"],
         href: "/articles?categorie=gestion-de-projet",
         cta: "Articles gestion de projet",
+        image: "/images/banner/conception.jpg",
         tone: "navy",
       },
       {
@@ -116,7 +132,8 @@ export const home: HomeContent = {
         points: ["Simulation numérique & éléments finis", "Optimisation produit / procédé", "Machine learning appliqué", "Équipes R&D & transfert"],
         href: "/a-propos",
         cta: "Découvrir le parcours",
-        tone: "white",
+        image: "/images/banner/innovation.jpg",
+        tone: "teal",
       },
       {
         number: "03",
@@ -126,6 +143,7 @@ export const home: HomeContent = {
         points: ["Bootcamps PMP® en français", "Coaching individuel", "Ateliers en entreprise", "Méthode d’examen"],
         href: "/formations",
         cta: "Voir les formations",
+        image: "/images/banner/management.jpg",
         tone: "blue",
       },
       {
@@ -136,6 +154,7 @@ export const home: HomeContent = {
         points: ["Fiche de paie décryptée", "L’impôt sur le revenu expliqué", "Valeur acquise & ROI", "Simulateurs en ligne"],
         href: "/outils",
         cta: "Essayer les simulateurs",
+        image: "/images/banner/pilotage.jpg",
         tone: "sky",
       },
     ],
@@ -174,21 +193,12 @@ export const home: HomeContent = {
 
   articles: { label: "Le journal", title: "Derniers articles" },
 
-  book: {
-    label: "Le livre",
-    title: "[TITRE DU LIVRE]",
-    subtitle: "Un guide pratique de gestion de projet",
-    status: "writing",
-    statusLabel: "En cours d’écriture",
-    pitch:
-      "De la théorie PMBOK® à la réalité du terrain industriel : des méthodes éprouvées, des cas concrets, et tout ce que l’on n’apprend pas dans les manuels.",
-    excerpts: [
-      { title: "[EXTRAIT PROVISOIRE]", body: "Un planning n’est pas une promesse faite au sponsor : c’est une hypothèse de travail. Sa valeur tient à la vitesse à laquelle il vous signale qu’elle a cessé d’être vraie." },
-      { title: "[EXTRAIT PROVISOIRE]", body: "Dans une usine, un retard ne se discute pas en réunion : il se voit sur la ligne. La gestion de projet n’est pas une affaire de documents, mais de décisions prises à temps." },
-      { title: "[EXTRAIT PROVISOIRE]", body: "Le risque le plus dangereux d’un projet est rarement technique. C’est celui que tout le monde voit, mais que personne n’ose inscrire dans le registre." },
-    ],
-    waitlistTitle: "Soyez prévenu(e) à la sortie",
-    waitlistText: "Un seul email le jour de la sortie, et des extraits en avant-première.",
+  books: {
+    label: "Livres",
+    title: "Livres",
+    intro: "Des guides pratiques, de la théorie à la réalité du terrain industriel.",
+    waitlistTitle: "Soyez prévenu(e) des sorties",
+    waitlistText: "Un email à chaque nouveau livre, et des extraits en avant-première.",
   },
 
   pmp: {
@@ -234,11 +244,11 @@ export const home: HomeContent = {
   newsletter: {
     label: "Restons en contact",
     title: "Une méthode claire, chaque mois.",
-    text: "Articles, outils et coulisses de la gestion de projet. Et la sortie du livre en avant-première.",
+    text: "Articles, outils et coulisses de la gestion de projet. Et les sorties de livres en avant-première.",
     interests: [
       { value: "gestion-projet", label: "Gestion de projet" },
       { value: "finances-perso", label: "Finances perso" },
-      { value: "livre", label: "Le livre" },
+      { value: "livre", label: "Livres" },
     ],
   },
 

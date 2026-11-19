@@ -7,6 +7,24 @@ import type { GalleryItem, Testimonial } from "@/lib/content/types";
  */
 export const testimonials: Testimonial[] = [
   {
+    quote: "Certifiée PMP® le 13 novembre 2026, accompagnée par Yao lors du bootcamp « Un coup KO ».",
+    name: "Anouchka N’GORAN",
+    role: "PMP® Certified — 13 novembre 2026",
+    videoUrl: "/videos/anouchka-ngoran-pmp.mp4",
+    poster: "/videos/anouchka-ngoran-pmp.jpg",
+    featured: true,
+    published: true,
+  },
+  {
+    quote: "Certifié PMP® le 10 novembre 2026, accompagné par Yao lors du bootcamp « Un coup KO ».",
+    name: "Merveil Daniel AGNANDJI",
+    role: "PMP® Certified — 10 novembre 2026",
+    videoUrl: "/videos/merveil-daniel-agnandji-pmp.mp4",
+    poster: "/videos/merveil-daniel-agnandji-pmp.jpg",
+    featured: true,
+    published: true,
+  },
+  {
     quote:
       "Son expertise approfondie du management de projet, associée à une pédagogie exceptionnelle, crée un environnement d’apprentissage exigeant et motivant. Il ne se contente pas de transmettre des connaissances, il développe également la confiance, la discipline et l’état d’esprit nécessaires à la réussite.",
     name: "Alpha Amadou Diallo",

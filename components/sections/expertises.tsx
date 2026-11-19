@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import type { HomeContent } from "@/lib/content/types";
@@ -7,6 +8,7 @@ import { HorizontalScroll } from "./horizontal-scroll";
 
 const tones = {
   white: { card: "bg-white text-navy-deep border border-line", sub: "text-muted", tag: "text-blue", dot: "bg-blue" },
+  teal: { card: "bg-teal text-white", sub: "text-white/80", tag: "text-sky", dot: "bg-sky" },
   navy: { card: "bg-navy-deep text-white", sub: "text-mist", tag: "text-sky", dot: "bg-sky" },
   blue: { card: "bg-blue text-white", sub: "text-white/75", tag: "text-sky", dot: "bg-sky" },
   sky: { card: "bg-sky text-navy-deep", sub: "text-navy/75", tag: "text-navy", dot: "bg-navy" },
@@ -38,11 +40,16 @@ export function Expertises({ content }: { content: HomeContent["expertises"] }) 
             <span aria-hidden="true" className="display pointer-events-none absolute -right-4 -bottom-10 text-[16rem] leading-none opacity-[0.07]">
               {item.number}
             </span>
+            {item.image && (
+              <div className="relative mb-6 aspect-[16/9] w-full overflow-hidden rounded-[16px] shadow-[0_18px_40px_-16px_rgba(0,0,0,0.45)] lg:absolute lg:top-10 lg:right-10 lg:mb-0 lg:aspect-square lg:w-36 xl:w-44">
+                <Image src={item.image} alt="" fill sizes="(min-width:1024px) 180px, 80vw" className="object-cover transition-transform duration-700 group-hover:scale-105" />
+              </div>
+            )}
             <div className="relative">
               <p className={cn("label-caps", t.tag)}>
                 {item.number} — {item.tag}
               </p>
-              <h3 className="display mt-6 text-[clamp(2.25rem,4vw,3.75rem)] font-normal tracking-normal">{item.title}</h3>
+              <h3 className="display mt-6 max-w-[14ch] text-[clamp(2.25rem,4vw,3.75rem)] font-normal tracking-normal">{item.title}</h3>
               <p className={cn("mt-5 max-w-md text-lead", t.sub)}>{item.lead}</p>
             </div>
             <div className="relative mt-10">

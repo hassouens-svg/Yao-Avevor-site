@@ -18,14 +18,14 @@ export const mainNav = [
   { href: "/formations", label: "Formations" },
   { href: "/articles", label: "Articles" },
   { href: "/outils", label: "Simulateurs" },
-  { href: "/livre", label: "Le livre" },
+  { href: "/livres", label: "Livres" },
 ] as const;
 
 export const footerNav = {
   explorer: [
     { href: "/a-propos", label: "À propos" },
     { href: "/articles", label: "Articles" },
-    { href: "/livre", label: "Le livre" },
+    { href: "/livres", label: "Livres" },
     { href: "/formations", label: "Formations & coaching" },
     { href: "/outils", label: "Simulateurs" },
     { href: "/ressources", label: "Ressources" },

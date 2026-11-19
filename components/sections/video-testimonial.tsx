@@ -19,7 +19,7 @@ export function VideoTestimonial({ item }: { item: Testimonial }) {
 
   return (
     <figure>
-      <div className="relative aspect-video overflow-hidden rounded-[var(--radius-md)] bg-navy">
+      <div className="relative aspect-square overflow-hidden rounded-[20px] bg-navy shadow-lift">
         {playing ? (
           embed ? (
             <iframe
@@ -30,7 +30,7 @@ export function VideoTestimonial({ item }: { item: Testimonial }) {
               className="absolute inset-0 size-full"
             />
           ) : (
-            <video src={item.videoUrl} controls autoPlay className="absolute inset-0 size-full object-cover" />
+            <video src={item.videoUrl} poster={item.poster} controls autoPlay playsInline className="absolute inset-0 size-full bg-black object-contain" />
           )
         ) : (
           <button
@@ -39,10 +39,11 @@ export function VideoTestimonial({ item }: { item: Testimonial }) {
             aria-label={`Lire le témoignage vidéo de ${item.name}`}
             className="group absolute inset-0 flex items-center justify-center"
           >
-            {item.photo && (
+            {(item.poster ?? item.photo) && (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={item.photo} alt="" className="absolute inset-0 size-full object-cover opacity-70" />
+              <img src={item.poster ?? item.photo} alt="" className="absolute inset-0 size-full object-cover" />
             )}
+            <span className="absolute inset-0 bg-navy-deep/25 transition-colors group-hover:bg-navy-deep/10" />
             <span className="relative inline-flex size-16 items-center justify-center rounded-full bg-white text-navy transition-transform duration-500 ease-[var(--ease-out-expo)] group-hover:scale-110">
               <span className="absolute inset-0 animate-ping rounded-full bg-white/40 motion-reduce:hidden" />
               <Play strokeWidth={1.5} className="relative ml-0.5 size-6 fill-navy" />

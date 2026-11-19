@@ -6,6 +6,7 @@ import { home } from "@/content/home";
 import { lexicon } from "@/content/lexicon";
 import { articles, categories } from "@/content/articles";
 import { gallery, testimonials } from "@/content/testimonials";
+import { books } from "@/content/books";
 
 export async function getHomeContent() {
   return home;
@@ -46,4 +47,13 @@ export async function getRelatedArticles(slug: string, limit = 3) {
     .filter((a) => a.slug !== slug)
     .sort((a, b) => Number(b.category === current?.category) - Number(a.category === current?.category) || b.publishedAt.localeCompare(a.publishedAt))
     .slice(0, limit);
+}
+
+
+export async function getBooks() {
+  return books;
+}
+
+export async function getBook(slug: string) {
+  return books.find((b) => b.slug === slug) ?? null;
 }

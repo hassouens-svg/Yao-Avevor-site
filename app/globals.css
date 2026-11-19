@@ -16,6 +16,8 @@
   --color-blue: #1d4f91;
   --color-blue-bright: #2f6fc0;
   --color-cloud: #f3f6fa;
+  --color-teal: #0d7480;
+  --color-gold: #a87700;
 
   --font-display: var(--font-anton), "Arial Narrow", Impact, sans-serif;
   --font-serif: var(--font-display);

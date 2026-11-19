@@ -7,8 +7,11 @@ import { Tilt } from "@/components/public/tilt";
 const tones = {
   white: "bg-white text-navy-deep border border-line",
   navy: "bg-navy-deep text-white",
-  sky: "bg-sky-soft text-navy-deep",
+  sky: "bg-sky text-navy-deep",
+  blue: "bg-blue text-white",
+  teal: "bg-teal text-white",
 } as const;
+const darkTones = new Set(["navy", "blue", "teal"]);
 
 function Tile({ item }: { item: BentoItem }) {
   const span = item.span === "tall" ? "row-span-2" : item.span === "wide" ? "sm:col-span-2" : "";
@@ -31,22 +34,22 @@ function Tile({ item }: { item: BentoItem }) {
     return (
       <Tilt className={cn("flex flex-col justify-between gap-8 rounded-[var(--radius-lg)] p-7", tone, span)}>
         <p className="display text-[clamp(3.5rem,6vw,5.5rem)]">{item.value}</p>
-        <p className={cn("text-sm leading-snug", item.tone === "navy" ? "text-mist" : "text-muted")}>{item.label}</p>
+        <p className={cn("text-sm leading-snug", darkTones.has(item.tone ?? "") ? "text-white/75" : "text-navy/75")}>{item.label}</p>
       </Tilt>
     );
   }
   return (
     <Tilt className={cn("flex flex-col justify-between gap-8 rounded-[var(--radius-lg)] p-7", tone, span)}>
       <div className="flex items-start justify-between gap-4">
-        <p className={cn("label-caps", item.tone === "navy" ? "text-sky" : "text-blue")}>{item.years}</p>
+        <p className={cn("label-caps", darkTones.has(item.tone ?? "") ? "text-sky" : "text-navy")}>{item.years}</p>
         {item.logo && (
-          <Image src={item.logo} alt="" width={120} height={40} className="h-6 w-auto object-contain opacity-80" />
+          <span className="rounded-md bg-white px-2 py-1"><Image src={item.logo} alt="" width={120} height={40} className="h-5 w-auto object-contain" /></span>
         )}
       </div>
       <div>
-        <p className={cn("text-sm font-medium", item.tone === "navy" ? "text-mist" : "text-muted")}>{item.org}</p>
+        <p className={cn("text-sm font-medium", darkTones.has(item.tone ?? "") ? "text-white/75" : "text-navy/75")}>{item.org}</p>
         <h3 className="mt-1 text-[1.375rem] leading-tight">{item.title}</h3>
-        <p className={cn("mt-3 text-[0.9375rem] leading-relaxed", item.tone === "navy" ? "text-white/75" : "text-muted")}>
+        <p className={cn("mt-3 text-[0.9375rem] leading-relaxed", darkTones.has(item.tone ?? "") ? "text-white/80" : "text-navy/80")}>
           {item.text}
         </p>
       </div>
