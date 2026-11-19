@@ -59,7 +59,7 @@ export function MobileMenu({ open, onClose }: { open: boolean; onClose: () => vo
                       href={item.href}
                       ref={i === 0 ? firstLink : undefined}
                       onClick={onClose}
-                      className="flex items-baseline gap-4 py-2 font-serif text-[clamp(2.25rem,9vw,3.5rem)] leading-[1.05] tracking-[-0.02em]"
+                      className="flex items-baseline gap-4 py-2 display text-[clamp(2.5rem,10vw,4rem)]"
                     >
                       <span className="label-caps tabular text-sky">{String(i + 1).padStart(2, "0")}</span>
                       {item.label}

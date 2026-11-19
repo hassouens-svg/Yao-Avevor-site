@@ -9,18 +9,16 @@ import { Wordmark } from "./monogram";
 import { MobileMenu } from "./mobile-menu";
 
 /**
- * Header : transparent (texte blanc) au-dessus d'une section marquée `data-header-dark`,
- * puis fond blanc flouté. Se rétracte au scroll vers le bas, réapparaît vers le haut.
+ * Header clair : transparent en haut de page, puis blanc flouté.
+ * Se rétracte au scroll vers le bas, réapparaît vers le haut.
  */
 export function Header() {
   const pathname = usePathname();
-  const [overDark, setOverDark] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [hidden, setHidden] = useState(false);
   // Le menu est « ouvert pour une page donnée » : il se referme de lui-même à la navigation.
   const [menuPath, setMenuPath] = useState<string | null>(null);
   const menuOpen = menuPath === pathname;
-
   const closeMenu = useCallback(() => setMenuPath(null), []);
 
   useEffect(() => {
@@ -31,34 +29,20 @@ export function Header() {
       const y = window.scrollY;
       setScrolled(y > 8);
       if (Math.abs(y - lastY) > 6) {
-        setHidden(y > lastY && y > 240);
+        setHidden(y > lastY && y > 320);
         lastY = y;
       }
-      // Couleur selon la section sous le header
-      const probe = 30;
-      const darks = document.querySelectorAll<HTMLElement>("[data-header-dark]");
-      let dark = false;
-      darks.forEach((el) => {
-        const r = el.getBoundingClientRect();
-        if (r.top <= probe && r.bottom >= probe) dark = true;
-      });
-      setOverDark(dark);
     };
     const onScroll = () => {
       if (!raf) raf = requestAnimationFrame(update);
     };
     update();
     window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
     return () => {
       window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
       cancelAnimationFrame(raf);
     };
-  }, [pathname]);
-
-  const solid = scrolled && !overDark;
-  const light = overDark || menuOpen; // texte blanc
+  }, []);
 
   return (
     <>
@@ -72,30 +56,25 @@ export function Header() {
         className={cn(
           "fixed inset-x-0 top-0 z-50 transition-[transform,background-color,box-shadow,color] duration-700 ease-[var(--ease-out-expo)]",
           hidden && !menuOpen ? "-translate-y-full" : "translate-y-0",
-          solid && !menuOpen && "bg-white/80 shadow-[0_1px_0_var(--color-line)] backdrop-blur-xl backdrop-saturate-150",
-          overDark && scrolled && !menuOpen && "bg-navy-deep/70 backdrop-blur-xl",
-          light ? "text-white" : "text-navy",
+          scrolled && !menuOpen && "bg-white/85 shadow-[0_1px_0_var(--color-line)] backdrop-blur-xl backdrop-saturate-150",
+          menuOpen ? "text-white" : "text-navy-deep",
         )}
       >
         <div className="container-site flex h-[var(--header-h)] items-center justify-between gap-8">
-          <Link href="/" aria-label="Yao AVEVOR — accueil" data-cursor="link" className="relative z-[60]">
+          <Link href="/" aria-label="Yao AVEVOR — accueil" className="relative z-[60]">
             <Wordmark />
           </Link>
 
           <nav aria-label="Navigation principale" className="hidden lg:block">
-            <ul className="flex items-center gap-9 text-[0.9375rem]">
+            <ul className="flex items-center gap-8 text-[0.875rem] font-medium">
               {mainNav.map((item) => {
                 const active = pathname === item.href || pathname.startsWith(item.href + "/");
                 return (
                   <li key={item.href}>
                     <Link
                       href={item.href}
-                      data-cursor="link"
                       aria-current={active ? "page" : undefined}
-                      className={cn(
-                        "link-underline pb-1 transition-opacity",
-                        active ? "bg-[length:100%_1px]" : "opacity-85 hover:opacity-100",
-                      )}
+                      className={cn("link-underline pb-1", active && "bg-[length:100%_1px]")}
                     >
                       {item.label}
                     </Link>
@@ -108,13 +87,7 @@ export function Header() {
           <div className="flex items-center gap-3">
             <Link
               href="/contact"
-              data-cursor="link"
-              className={cn(
-                "hidden h-10 items-center rounded-full border px-5 text-sm font-medium transition-colors duration-500 lg:inline-flex",
-                light
-                  ? "border-white/30 hover:border-white hover:bg-white hover:text-navy"
-                  : "border-navy/20 hover:border-navy hover:bg-navy hover:text-white",
-              )}
+              className="hidden h-10 items-center rounded-full bg-navy-deep px-5 text-sm font-medium text-white transition-colors duration-500 hover:bg-blue lg:inline-flex"
             >
               Me contacter
             </Link>
@@ -124,19 +97,18 @@ export function Header() {
               aria-expanded={menuOpen}
               aria-controls="menu-mobile"
               aria-label={menuOpen ? "Fermer le menu" : "Ouvrir le menu"}
-              data-cursor="link"
               className="relative z-[60] -mr-2 inline-flex size-11 items-center justify-center lg:hidden"
             >
               <span className="relative block h-3 w-6">
                 <span
                   className={cn(
-                    "absolute left-0 h-px w-6 bg-current transition-transform duration-500 ease-[var(--ease-out-expo)]",
+                    "absolute left-0 h-[1.5px] w-6 bg-current transition-transform duration-500 ease-[var(--ease-out-expo)]",
                     menuOpen ? "top-1.5 rotate-45" : "top-0",
                   )}
                 />
                 <span
                   className={cn(
-                    "absolute left-0 h-px bg-current transition-all duration-500 ease-[var(--ease-out-expo)]",
+                    "absolute left-0 h-[1.5px] bg-current transition-all duration-500 ease-[var(--ease-out-expo)]",
                     menuOpen ? "top-1.5 w-6 -rotate-45" : "top-3 w-4",
                   )}
                 />

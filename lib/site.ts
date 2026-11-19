@@ -4,9 +4,9 @@
 export const site = {
   name: "Yao AVEVOR",
   fullName: "Yao AVEVOR, Ph.D, PMP®",
-  tagline: "Piloter vos projets. Maîtriser votre argent.",
+  tagline: "Piloter l’innovation. Transmettre la méthode.",
   description:
-    "Docteur-ingénieur, responsable R&D industriel et formateur PMP® agréé PMI ATP. Gestion de projet, finances personnelles et finances de projet, expliquées avec rigueur et simplicité.",
+    "Docteur-ingénieur, responsable R&D chez Verallia et formateur PMP® agréé PMI ATP. Gestion de projet, innovation industrielle, formation et outils pratiques.",
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
   email: "aveveyao@yahoo.com",
   linkedin: "https://www.linkedin.com/in/yao-avevor/",
@@ -15,10 +15,10 @@ export const site = {
 
 export const mainNav = [
   { href: "/a-propos", label: "À propos" },
-  { href: "/articles", label: "Articles" },
-  { href: "/livre", label: "Le livre" },
   { href: "/formations", label: "Formations" },
-  { href: "/ressources", label: "Ressources" },
+  { href: "/articles", label: "Articles" },
+  { href: "/outils", label: "Simulateurs" },
+  { href: "/livre", label: "Le livre" },
 ] as const;
 
 export const footerNav = {
@@ -27,6 +27,7 @@ export const footerNav = {
     { href: "/articles", label: "Articles" },
     { href: "/livre", label: "Le livre" },
     { href: "/formations", label: "Formations & coaching" },
+    { href: "/outils", label: "Simulateurs" },
     { href: "/ressources", label: "Ressources" },
     { href: "/temoignages", label: "Témoignages" },
   ],

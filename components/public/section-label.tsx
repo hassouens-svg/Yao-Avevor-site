@@ -1,8 +1,7 @@
 import { cn } from "@/lib/cn";
 
-/** Label éditorial : « 01 — EXPERTISE » précédé d'un filet. */
+/** Label éditorial en police mono : « — PARCOURS ». */
 export function SectionLabel({
-  index,
   children,
   tone = "light",
   className,
@@ -13,18 +12,8 @@ export function SectionLabel({
   className?: string;
 }) {
   return (
-    <p
-      className={cn(
-        "label-caps flex items-center gap-4",
-        tone === "dark" ? "text-mist" : "text-muted",
-        className,
-      )}
-    >
-      <span aria-hidden="true" className={cn("h-px w-10", tone === "dark" ? "bg-sky/60" : "bg-navy/30")} />
-      {index && (
-        <span className={cn("tabular", tone === "dark" ? "text-sky" : "text-navy")}>{index}</span>
-      )}
-      {index && <span aria-hidden="true">—</span>}
+    <p className={cn("label-caps flex items-center gap-3", tone === "dark" ? "text-sky" : "text-navy", className)}>
+      <span aria-hidden="true" className={cn("h-px w-6", tone === "dark" ? "bg-sky" : "bg-navy")} />
       <span>{children}</span>
     </p>
   );
