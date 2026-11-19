@@ -109,13 +109,15 @@ export function incomeTax({ income, couple, children, applyDeduction }: TaxInput
   }
   tax = Math.max(0, Math.round(tax));
 
+  // Si le quotient familial est plafonné, l'impôt suit le barème calculé sur les parts de base
+  const ref = qfCapped ? { r: withBase, p: baseParts } : { r: withAll, p: parts };
   return {
     taxableIncome,
     parts,
     tax,
     averageRate: taxableIncome > 0 ? tax / taxableIncome : 0,
-    marginalRate: withAll.marginal,
-    byBracket: withAll.byBracket.map((b) => ({ ...b, amount: b.amount * parts })),
+    marginalRate: ref.r.marginal,
+    byBracket: ref.r.byBracket.map((b) => ({ ...b, amount: b.amount * ref.p })),
     qfCapped,
     decote: Math.round(decote),
   };
