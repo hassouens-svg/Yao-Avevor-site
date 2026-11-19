@@ -25,7 +25,12 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const a = await getArticle(slug);
   if (!a) return {};
-  return { title: a.title, description: a.excerpt, openGraph: { type: "article", title: a.title, description: a.excerpt } };
+  return {
+    title: a.title,
+    description: a.excerpt,
+    openGraph: { type: "article", title: a.title, description: a.excerpt, images: [{ url: "/opengraph-image.jpg", width: 1200, height: 630 }] },
+    twitter: { card: "summary_large_image", title: a.title, description: a.excerpt, images: ["/opengraph-image.jpg"] },
+  };
 }
 
 export default async function ArticlePage({ params }: { params: Promise<{ slug: string }> }) {

@@ -33,7 +33,17 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "fr_FR",
-    siteName: site.name,
+    siteName: site.fullName,
+    url: "/",
+    title: `${site.fullName} — Gestion de projets industriels`,
+    description: site.description,
+    images: [{ url: "/opengraph-image.jpg", width: 1200, height: 630, alt: "Yao AVEVOR, Ph.D, PMP®" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `${site.fullName} — Gestion de projets industriels`,
+    description: site.description,
+    images: ["/opengraph-image.jpg"],
   },
 };
 
