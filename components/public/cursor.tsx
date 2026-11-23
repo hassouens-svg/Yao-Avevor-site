@@ -6,6 +6,7 @@ import { prefersReducedMotion } from "@/lib/motion/use-reduced-motion";
 /** Curseur discret : point bleu ciel qui grossit sur les éléments cliquables. Desktop uniquement. */
 export function Cursor() {
   const dot = useRef<HTMLDivElement>(null);
+  const label = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
     const fine = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
@@ -30,7 +31,9 @@ export function Cursor() {
       }
       const t = e.target as Element | null;
       const interactive = t?.closest('a, button, [role="button"], input, textarea, select, label, [data-cursor]');
-      el.dataset.state = interactive ? "hover" : "";
+      const labelled = t?.closest<HTMLElement>("[data-cursor-label]");
+      el.dataset.state = labelled ? "label" : interactive ? "hover" : "";
+      if (labelled && label.current) label.current.textContent = labelled.dataset.cursorLabel ?? "";
     };
     const onLeave = () => {
       visible = false;
@@ -60,8 +63,12 @@ export function Cursor() {
       aria-hidden="true"
       className="pointer-events-none fixed top-0 left-0 z-[200] hidden opacity-0 transition-opacity duration-300 [@media(hover:hover)_and_(pointer:fine)]:block"
     >
-      <div className="-translate-x-1/2 -translate-y-1/2">
-        <div className="size-2.5 rounded-full bg-sky mix-blend-difference transition-transform duration-500 ease-[var(--ease-out-expo)] in-data-[state=hover]:scale-[4.2] in-data-[pressed=1]:scale-75 in-data-[state=hover]:opacity-60" />
+      <div className="relative -translate-x-1/2 -translate-y-1/2">
+        <div className="size-2.5 rounded-full bg-sky mix-blend-difference transition-transform duration-500 ease-[var(--ease-out-expo)] in-data-[state=hover]:scale-[4.2] in-data-[pressed=1]:scale-75 in-data-[state=hover]:opacity-60 in-data-[state=label]:scale-0" />
+        <span
+          ref={label}
+          className="label-caps absolute top-1/2 left-1/2 flex size-20 -translate-x-1/2 -translate-y-1/2 scale-0 items-center justify-center rounded-full bg-copper text-white shadow-lift transition-transform duration-500 ease-[var(--ease-out-expo)] in-data-[state=label]:scale-100"
+        />
       </div>
     </div>
   );

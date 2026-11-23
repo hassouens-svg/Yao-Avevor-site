@@ -6,8 +6,8 @@ import type { HomeContent } from "@/lib/content/types";
 import portrait from "@/public/images/portrait-cutout.png";
 import { HeroMotion } from "./hero-motion";
 import { FloatingCards } from "./floating-cards";
+import { HeroKeywords } from "./hero-keywords";
 
-const keywordColors = ["text-blue", "text-[#a87700]", "text-blue-bright", "text-[#c45a10]"];
 
 /**
  * Hero : grande photo détourée en fond clair, illustrations de la bannière qui flottent en 3D (floues),
@@ -29,13 +29,16 @@ export function Hero({ content }: { content: HomeContent["hero"] }) {
         data-hero-portrait
         className="relative z-10 mx-auto mt-[calc(var(--header-h)-0.5rem)] flex h-[56svh] w-full items-end justify-center will-change-transform md:absolute md:inset-x-0 md:top-0 md:bottom-0 md:mt-0 md:h-auto md:justify-end md:pr-[max(var(--gutter),calc((100vw-var(--container-site))/2+2vw))]"
       >
+        <div aria-hidden="true" className="absolute bottom-[8%] left-1/2 h-[70%] w-[70%] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(140,200,240,0.55),rgba(140,200,240,0))] md:left-auto md:right-[max(var(--gutter),calc((100vw-var(--container-site))/2+2vw))] md:w-[42%] md:translate-x-[8%]" />
         <Image
+          data-hero-photo
+          quality={90}
           src={portrait}
           alt={content.portraitAlt}
           priority
           fetchPriority="high"
           sizes="(min-width: 768px) 50vw, 100vw"
-          className="h-full w-auto max-w-none object-contain object-bottom md:h-[94%]"
+          className="relative h-full w-auto max-w-none object-contain object-bottom [transform-origin:50%_100%] md:h-[94%]"
         />
       </div>
 
@@ -48,7 +51,7 @@ export function Hero({ content }: { content: HomeContent["hero"] }) {
       {/* Texte */}
       <div className="container-site relative z-20 -mt-[9svh] pb-12 md:mt-auto md:pt-[calc(var(--header-h)+2rem)] md:pb-16">
         <div className="md:max-w-[52%]">
-        <SectionLabel>{content.label}</SectionLabel>
+        <SectionLabel className="max-sm:text-[0.625rem]! max-sm:tracking-[0.06em]!">{content.label}</SectionLabel>
         <h1 className="mt-5 display text-[clamp(2.5rem,11vw,3.75rem)] leading-[1.04] text-navy-deep md:text-[clamp(3.5rem,6.2vw,6.5rem)]">
           <Reveal as="span" mode="lines" immediate delay={0.05} className="block">
             {content.line1}
@@ -58,14 +61,7 @@ export function Hero({ content }: { content: HomeContent["hero"] }) {
           </Reveal>
         </h1>
         <Reveal immediate delay={0.4} className="mt-5">
-          <ul className="flex flex-wrap items-center gap-x-4 gap-y-2" aria-label="Domaines">
-            {content.keywords.map((k, i) => (
-              <li key={k} className="flex items-center gap-4">
-                {i > 0 && <span aria-hidden="true" className="size-1.5 rotate-45 bg-navy-deep/30" />}
-                <span className={`display text-[clamp(1.25rem,2.2vw,1.875rem)] ${keywordColors[i % keywordColors.length]}`}>{k}</span>
-              </li>
-            ))}
-          </ul>
+          <HeroKeywords words={content.keywords} />
         </Reveal>
         <Reveal as="p" immediate delay={0.55} className="mt-6 max-w-[36rem] text-[1.0625rem] leading-relaxed text-ink/75 sm:text-lead">
           {content.subtitle}

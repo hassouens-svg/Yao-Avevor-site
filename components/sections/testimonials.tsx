@@ -23,7 +23,7 @@ export function Testimonials({ content, items, hideHeader = false }: { content: 
         </div>
 
         {videos.length > 0 && (
-          <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+          <div className={cn("mt-10 grid gap-5 md:grid-cols-2", videos.length !== 2 && videos.length !== 4 && "lg:grid-cols-3")}>
             {videos.map((v) => (
               <VideoTestimonial key={v.name} item={v} />
             ))}

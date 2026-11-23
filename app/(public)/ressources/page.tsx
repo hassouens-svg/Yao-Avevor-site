@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   description: "Lexique complet de la fiche de paie, traducteur des termes de gestion de projet et simulateurs gratuits.",
 };
 
-const colors = ["bg-navy-deep text-white", "bg-blue text-white", "bg-teal text-white", "bg-sky text-navy-deep"];
+const colors = ["bg-navy-deep text-white", "bg-blue text-white", "bg-copper text-white", "bg-sky text-navy-deep"];
 
 export default async function RessourcesPage() {
   const [content, lexicon] = await Promise.all([getHomeContent(), getLexicon()]);

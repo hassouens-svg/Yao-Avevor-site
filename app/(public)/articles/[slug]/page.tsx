@@ -1,3 +1,4 @@
+import { ViewTransition } from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
@@ -76,13 +77,15 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
               <span>{article.readingMinutes} min de lecture</span>
             </div>
           </div>
-          <div className="relative mt-12 aspect-[21/9] overflow-hidden rounded-md">
-            {article.coverImage ? (
-              <Image src={article.coverImage} alt="" fill priority sizes="100vw" className="object-cover" unoptimized />
-            ) : (
-              <ArticleCover motif={article.cover} />
-            )}
-          </div>
+          <ViewTransition name={`cover-${article.slug}`} share="morph" default="none">
+            <div className="relative mt-12 aspect-[21/9] overflow-hidden rounded-md">
+              {article.coverImage ? (
+                <Image src={article.coverImage} alt="" fill priority sizes="100vw" className="object-cover" unoptimized />
+              ) : (
+                <ArticleCover motif={article.cover} />
+              )}
+            </div>
+          </ViewTransition>
         </div>
       </header>
 

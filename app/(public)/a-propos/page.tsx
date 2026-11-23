@@ -34,7 +34,7 @@ export default async function AProposPage() {
           <SectionHeader label="Certifications" title="Certifié, et formateur agréé." />
           <ul className="mt-10 grid gap-4 md:grid-cols-3">
             {certifications.map((c, i) => (
-              <li key={c.name} className={["rounded-md p-7 text-white", "bg-navy-deep", "bg-blue", "bg-teal"][i % 3]}>
+              <li key={c.name} className={["rounded-md p-7 text-white", "bg-navy-deep", "bg-blue", "bg-copper"][i % 3]}>
                 <p className="label-caps text-sky">{c.year || "Certification"}</p>
                 <p className="mt-4 text-[1.375rem] font-bold">{c.name}</p>
                 <p className="mt-2 text-sm text-white/75">{c.org}</p>

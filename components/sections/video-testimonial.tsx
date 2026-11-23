@@ -16,10 +16,12 @@ function embedUrl(url: string) {
 export function VideoTestimonial({ item }: { item: Testimonial }) {
   const [playing, setPlaying] = useState(false);
   const embed = item.videoUrl ? embedUrl(item.videoUrl) : null;
+  // Vignette « visage » extraite de la vidéo (si elle existe), sinon photo ou affiche
+  const face = item.poster?.startsWith("/videos/") ? item.poster.replace(/\.jpg$/, "-face.jpg") : undefined;
 
   return (
-    <figure>
-      <div className="relative aspect-square overflow-hidden rounded-md bg-navy shadow-lift">
+    <figure data-cursor-label="Voir">
+      <div className="relative aspect-[4/3] overflow-hidden rounded-md bg-navy shadow-lift">
         {playing ? (
           embed ? (
             <iframe
@@ -37,17 +39,30 @@ export function VideoTestimonial({ item }: { item: Testimonial }) {
             type="button"
             onClick={() => setPlaying(true)}
             aria-label={`Lire le témoignage vidéo de ${item.name}`}
-            className="group absolute inset-0 flex items-center justify-center"
+            className="group absolute inset-0 flex flex-col items-center justify-center overflow-hidden bg-navy-deep text-white"
           >
             {(item.poster ?? item.photo) && (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={item.poster ?? item.photo} alt="" className="absolute inset-0 size-full object-cover" />
+              <img src={item.poster ?? item.photo} alt="" className="absolute inset-0 size-full scale-125 object-cover opacity-50 blur-2xl saturate-150" />
             )}
-            <span className="absolute inset-0 bg-navy-deep/25 transition-colors group-hover:bg-navy-deep/10" />
-            <span className="relative inline-flex size-16 items-center justify-center rounded-full bg-white text-navy transition-transform duration-500 ease-[var(--ease-out-expo)] group-hover:scale-110">
-              <span className="absolute inset-0 animate-ping rounded-full bg-white/40 motion-reduce:hidden" />
-              <Play strokeWidth={1.5} className="relative ml-0.5 size-6 fill-navy" />
+            <span aria-hidden="true" className="absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,transparent_20%,rgb(7_21_40/0.85)_75%)]" />
+            <span className="relative block aspect-square w-[clamp(7rem,30%,12rem)]">
+              <span className="relative block size-full overflow-hidden rounded-full border-[3px] border-copper-light shadow-[0_20px_40px_-10px_rgba(0,0,0,0.6)] transition-transform duration-700 ease-[var(--ease-out-expo)] group-hover:scale-105">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                {face || item.photo ? (
+                  <img src={face ?? item.photo} alt="" className="size-full object-cover" />
+                ) : (
+                  // Affiche « félicitations » : on zoome sur le médaillon du visage, au centre de l'image
+                  <img src={item.poster} alt="" className="absolute top-1/2 left-1/2 w-[370%] max-w-none -translate-x-1/2 -translate-y-[47%]" />
+                )}
+              </span>
+              <span className="absolute -right-1 -bottom-1 inline-flex size-12 items-center justify-center rounded-full bg-white text-navy shadow-lift transition-transform duration-500 group-hover:scale-110">
+                <span className="absolute inset-0 animate-ping rounded-full bg-white/40 motion-reduce:hidden" />
+                <Play strokeWidth={1.5} className="relative ml-0.5 size-5 fill-navy" />
+              </span>
             </span>
+            <span className="label-caps relative mt-5 text-copper-light">{item.role?.split("—")[0]?.trim() || "Témoignage"}</span>
+            <span className="display relative mt-2 px-4 text-center text-[clamp(1.4rem,2.4vw,1.9rem)] leading-tight">{item.name}</span>
           </button>
         )}
       </div>

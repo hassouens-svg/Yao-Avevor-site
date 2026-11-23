@@ -9,7 +9,7 @@ import { SectionHeader } from "@/components/public/section-header";
 
 const accent: Record<string, string> = {
   navy: "bg-navy-deep",
-  teal: "bg-teal",
+  teal: "bg-copper",
   blue: "bg-blue",
   sky: "bg-sky",
   white: "bg-blue-bright",
@@ -23,7 +23,7 @@ export function Expertises({ content }: { content: HomeContent["expertises"] }) 
   const [open, setOpen] = useState<number | null>(null);
 
   return (
-    <section id="expertises" className="bg-white py-[clamp(3.5rem,7vw,6rem)]">
+    <section id="expertises" className="blueprint relative bg-white py-[clamp(3.5rem,7vw,6rem)]">
       <div className="container-site">
         <div className="grid gap-6 lg:grid-cols-12 lg:items-end">
           <SectionHeader label={content.label} title={content.title} className="lg:col-span-7" />

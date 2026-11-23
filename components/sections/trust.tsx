@@ -11,7 +11,7 @@ function LogoItem({ logo, hidden }: { logo: Logo; hidden?: boolean }) {
         width={logo.width}
         height={logo.height}
         className={
-          "w-auto object-contain opacity-60 grayscale transition-[filter,opacity] duration-500 group-hover/logo:opacity-100 group-hover/logo:grayscale-0 " +
+          "w-auto object-contain opacity-80 grayscale-[0.7] transition-[filter,opacity] duration-500 group-hover/logo:opacity-100 group-hover/logo:grayscale-0 " +
           (square ? "h-11" : "h-7 sm:h-8")
         }
       />

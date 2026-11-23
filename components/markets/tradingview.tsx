@@ -20,6 +20,7 @@ export function TradingViewWidget({
 }) {
   const root = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     const el = root.current;
@@ -46,15 +47,35 @@ export function TradingViewWidget({
     s.type = "text/javascript";
     s.innerHTML = JSON.stringify({ locale: "fr", colorTheme: "light", isTransparent: true, ...config });
     el.appendChild(s);
+    // Masque le squelette dès que l'iframe TradingView a fini de charger
+    const mo = new MutationObserver(() => {
+      const f = el.querySelector("iframe");
+      if (!f) return;
+      mo.disconnect();
+      f.addEventListener("load", () => setTimeout(() => setLoaded(true), 250), { once: true });
+    });
+    mo.observe(el, { childList: true, subtree: true });
+    const fallback = setTimeout(() => setLoaded(true), 8000);
     return () => {
+      mo.disconnect();
+      clearTimeout(fallback);
       el.innerHTML = "";
     };
   }, [visible, widget, config]);
 
   // Cadre extérieur : garde la taille et le style ; TradingView réécrit le style du conteneur intérieur.
   return (
-    <div className={cn("overflow-hidden", className)} style={{ height }} aria-label="Données de marché TradingView">
-      <div ref={root} className="tradingview-widget-container h-full w-full" />
+    <div className={cn("relative overflow-hidden", className)} style={{ height }} aria-label="Données de marché TradingView" aria-busy={!loaded}>
+      <div aria-hidden="true" className={cn("skeleton pointer-events-none absolute inset-0 transition-opacity duration-500", loaded && "opacity-0")}>
+        {widget !== "ticker-tape" && (
+          <div className="flex h-full flex-col gap-3 p-5">
+            <span className="h-4 w-1/3 rounded-sm bg-line/70" />
+            <span className="h-3 w-1/5 rounded-sm bg-line/60" />
+            <span className="mt-auto h-1/2 w-full rounded-sm bg-[linear-gradient(180deg,transparent,rgb(227_231_237/0.7))] [clip-path:polygon(0_80%,12%_62%,24%_70%,38%_40%,52%_52%,66%_28%,80%_38%,100%_10%,100%_100%,0_100%)]" />
+          </div>
+        )}
+      </div>
+      <div ref={root} className={cn("tradingview-widget-container relative h-full w-full transition-opacity duration-500", loaded ? "opacity-100" : "opacity-0")} />
     </div>
   );
 }

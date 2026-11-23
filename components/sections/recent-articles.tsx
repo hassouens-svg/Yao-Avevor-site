@@ -24,7 +24,7 @@ export function RecentArticles({
   const shown = articles.filter((a) => !filter || a.category === filter).slice(0, 3);
 
   return (
-    <section id="articles" className="bg-cloud py-[clamp(4rem,8vw,7rem)]">
+    <section id="articles" className="bg-white py-[clamp(4rem,8vw,7rem)]">
       <div className="container-site">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <SectionHeader label={content.label} title={content.title} />

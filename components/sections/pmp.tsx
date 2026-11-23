@@ -8,7 +8,7 @@ import portrait from "@/public/images/portrait-2-cutout.png";
 /** Bloc « formation PMP® » : badge, titre, puces de chiffres, CTA, photo. */
 export function Pmp({ content }: { content: HomeContent["pmp"] }) {
   return (
-    <section id="pmp" className="bg-cloud py-[clamp(4rem,8vw,7rem)]">
+    <section id="pmp" className="bg-white py-[clamp(4rem,8vw,7rem)]">
       <div className="container-site grid items-center gap-12 lg:grid-cols-12">
         <div className="lg:col-span-6">
           <p className="inline-flex items-center gap-2 rounded-full border border-line bg-white px-3.5 py-1.5 font-mono text-xs text-navy-deep">
