@@ -7,7 +7,7 @@ export const site = {
   tagline: "Piloter l’innovation. Transmettre la méthode.",
   description:
     "Docteur-ingénieur, responsable R&D chez Verallia et formateur PMP® agréé PMI ATP. Gestion de projet, innovation industrielle, formation et outils pratiques.",
-  url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://yao-avevor-site.vercel.app",
+  url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://yaoavevor.com",
   email: "aveveyao@yahoo.com",
   linkedin: "https://www.linkedin.com/in/yao-avevor/",
   location: "Chalon-sur-Saône, France",

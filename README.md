@@ -2,8 +2,8 @@
 
 Site de Yao AVEVOR, Ph.D, PMP®. Next.js 16 · Tailwind CSS v4 · GSAP · Three.js · **Appwrite** (base de données, médias, connexion admin) · hébergé sur **Vercel**.
 
-- En ligne : https://yao-avevor-site.vercel.app
-- Administration : https://yao-avevor-site.vercel.app/admin
+- En ligne : https://yaoavevor.com
+- Administration : https://yaoavevor.com/admin
 
 ## Administration (pour Yao)
 
