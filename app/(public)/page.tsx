@@ -4,6 +4,7 @@ import { Trust } from "@/components/sections/trust";
 import { Stats } from "@/components/sections/stats";
 import { Bento } from "@/components/sections/bento";
 import { Expertises } from "@/components/sections/expertises";
+import { Ticker } from "@/components/sections/ticker";
 import { ToolsTeaser } from "@/components/sections/tools-teaser";
 import { MarketsStrip } from "@/components/sections/markets";
 import { RecentArticles } from "@/components/sections/recent-articles";
@@ -29,6 +30,7 @@ export default async function Home() {
       <Stats stats={content.stats} />
       <Bento content={content.bento} />
       <Expertises content={content.expertises} />
+      <Ticker words={content.ticker} />
       <MarketsStrip />
       <ToolsTeaser content={content.tools} />
       <Pmp content={content.pmp} />
