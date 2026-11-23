@@ -1,0 +1,146 @@
+1. Qui est responsable d'ordonner (prioriser) le Product Backlog dans Scrum ?
+A) Le Scrum Master
+B) Le Product Owner
+C) Le sponsor du projet
+D) L'équipe de développement
+Réponse : B
+Explication : Le Product Owner est responsable de maximiser la valeur du produit et d'ordonner le Product Backlog.
+
+2. Quelle est la durée maximale d'un sprint Scrum ?
+A) Une semaine
+B) Un mois
+C) Trois mois
+D) Il n'y a pas de limite
+Réponse : B
+Explication : Un sprint dure au plus un mois.
+
+3. Un projet présente un CPI de 0,8. Que peut-on conclure ?
+A) Il est en avance sur le planning
+B) Il dépense plus que prévu pour le travail réalisé
+C) Il est en retard sur le planning
+D) Il est sous le budget
+Réponse : B
+Explication : CPI = VA / CR. En dessous de 1, chaque euro dépensé produit moins de valeur que prévu.
+
+4. Un projet présente un SPI de 1,1. Que peut-on conclure ?
+A) Il est en avance sur le planning
+B) Il est en retard
+C) Il dépasse son budget
+D) Il est exactement dans les temps
+Réponse : A
+Explication : SPI = VA / VP. Au-dessus de 1, le travail réalisé dépasse le travail planifié.
+
+5. Qu'est-ce que le chemin critique ?
+A) La liste des tâches les plus coûteuses
+B) La plus longue séquence de tâches dépendantes, qui détermine la durée minimale du projet
+C) Les tâches confiées aux meilleurs experts
+D) Les tâches à risque élevé
+Réponse : B
+
+6. Quel document autorise formellement l'existence d'un projet ?
+A) Le registre des risques
+B) La charte du projet
+C) Le plan de management des communications
+D) Le WBS
+Réponse : B
+Explication : La charte du projet autorise le projet et donne au chef de projet l'autorité d'engager des ressources.
+
+7. Que signifie WBS ?
+A) Work Breakdown Structure (structure de découpage du projet)
+B) Weekly Budget Summary
+C) Work Base Schedule
+D) Weighted Benefit Score
+Réponse : A
+
+8. Une tâche dispose d'une marge totale de zéro. Cela signifie que :
+A) Elle peut être retardée sans conséquence
+B) Elle est sur le chemin critique
+C) Elle est terminée
+D) Elle n'a pas de prédécesseur
+Réponse : B
+
+9. Quelles sont des réponses possibles à une menace (risque négatif) ? (plusieurs réponses)
+A) Éviter
+B) Transférer
+C) Exploiter
+D) Atténuer
+Réponses : A, B, D
+Explication : Exploiter est une réponse à une opportunité (risque positif).
+
+10. Un membre de l'équipe signale un conflit avec un collègue. Que fait d'abord le chef de projet ?
+A) Il escalade immédiatement au sponsor
+B) Il remplace l'un des deux membres
+C) Il échange avec les personnes concernées pour comprendre la situation
+D) Il ignore le conflit pour ne pas l'aggraver
+Réponse : C
+
+11. Quel est le rôle principal du sponsor ?
+A) Rédiger le planning détaillé
+B) Porter le projet, fournir les ressources et arbitrer les décisions majeures
+C) Animer les réunions quotidiennes
+D) Tester les livrables
+Réponse : B
+
+12. Que représente la valeur acquise (VA / EV) ?
+A) Le montant réellement dépensé
+B) Le budget prévu à date
+C) La valeur budgétée du travail réellement réalisé
+D) Le budget total du projet
+Réponse : C
+
+13. Quel outil permet de clarifier qui est Responsable, qui Approuve, qui est Consulté et qui est Informé ?
+A) Le diagramme de Gantt
+B) La matrice RACI
+C) Le diagramme d'Ishikawa
+D) La courbe en S
+Réponse : B
+
+14. Dans une approche agile, que désigne un « incrément » ?
+A) Une augmentation du budget
+B) Un ensemble de travail utilisable et potentiellement livrable produit pendant une itération
+C) Une nouvelle exigence du client
+D) Une réunion de planification
+Réponse : B
+
+15. Qu'est-ce que la « dérive du périmètre » (scope creep) ?
+A) L'ajout non maîtrisé de travail sans ajustement des délais, des coûts ou des ressources
+B) Une réduction volontaire du périmètre
+C) Un retard de livraison du fournisseur
+D) Une erreur dans le calcul du budget
+Réponse : A
+
+16. Le client demande une modification importante en cours de projet. Que fait le chef de projet ?
+A) Il l'accepte immédiatement pour satisfaire le client
+B) Il la refuse systématiquement
+C) Il analyse l'impact et la soumet au processus de maîtrise des modifications
+D) Il demande à l'équipe de l'intégrer en heures supplémentaires
+Réponse : C
+
+17. À quoi sert un registre des risques ?
+A) À lister les membres de l'équipe
+B) À identifier, analyser et suivre les risques et leurs réponses
+C) À enregistrer les dépenses
+D) À planifier les congés
+Réponse : B
+
+18. Quel style de leadership est le plus associé aux équipes agiles ?
+A) Le leadership autoritaire
+B) Le leadership serviteur (servant leadership)
+C) Le laisser-faire
+D) Le leadership transactionnel uniquement
+Réponse : B
+
+19. Quand doit-on identifier les parties prenantes d'un projet ?
+A) Uniquement en fin de projet
+B) Le plus tôt possible, puis tout au long du projet
+C) Seulement si un conflit apparaît
+D) Après la livraison du premier jalon
+Réponse : B
+
+20. Quelle formule donne l'estimation du coût final (EAC) si la performance des coûts actuelle se maintient ?
+A) EAC = BAC / CPI
+B) EAC = BAC × SPI
+C) EAC = VA − CR
+D) EAC = BAC − VA
+Réponse : A
+Explication : Si le CPI actuel se maintient, le coût final estimé vaut le budget total divisé par le CPI.

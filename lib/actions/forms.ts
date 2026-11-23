@@ -2,6 +2,8 @@
 
 import { contactSchema, flattenErrors, subscribeSchema, type FormState } from "@/lib/validations/forms";
 import { createRow } from "@/lib/appwrite/rest";
+import { ADMIN_EMAIL, btn, esc, layout, p, sendEmail } from "@/lib/email";
+import { site } from "@/lib/site";
 
 /**
  * Actions des formulaires publics.
@@ -62,6 +64,12 @@ export async function sendContact(_prev: FormState, formData: FormData): Promise
   try {
     const d = parsed.data;
     await createRow("messages", { name: d.name, email: d.email, reason: d.reason, message: d.message, status: "new" });
+    await sendEmail({
+      to: ADMIN_EMAIL,
+      replyTo: d.email,
+      subject: `${d.reason} — nouveau message de ${d.name}`,
+      html: layout(`Nouveau message : ${esc(d.reason)}`, p(`<strong>${esc(d.name)}</strong> (${esc(d.email)})`) + p(esc(d.message).replace(/\n/g, "<br>")) + btn("Ouvrir les messages", `${site.url}/admin/messages`)),
+    });
   } catch {
     return { status: "error", message: "Un problème technique est survenu. Merci de réessayer, ou écrivez directement à aveveyao@yahoo.com." };
   }

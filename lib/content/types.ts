@@ -80,6 +80,7 @@ export type Testimonial = {
   /** URL YouTube/Vimeo, ou fichier vidéo (/videos/xxx.mp4 ou Supabase Storage) */
   videoUrl?: string;
   poster?: string;
+  rating?: number;
   featured?: boolean;
   published: boolean;
   note?: string;

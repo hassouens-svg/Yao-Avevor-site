@@ -132,6 +132,7 @@ export async function getTestimonials(): Promise<Testimonial[]> {
       photo: str(x.photo) || undefined,
       videoUrl: str(x.videoUrl) || undefined,
       poster: str(x.poster) || undefined,
+      rating: Number(x.rating) || undefined,
       featured: !!x.featured,
       published: true,
     }));
@@ -162,4 +163,31 @@ export async function getBook(slug: string) {
 
 export async function getGallery() {
   return gallery;
+}
+
+export type PublicTest = { slug: string; title: string; subject: string; description: string; passPct: number; count: number; questions: { q: string; options: string[]; multiple: boolean }[] };
+
+/** Tests publiés, sans les bonnes réponses (la correction se fait côté serveur). */
+export async function getTests(): Promise<PublicTest[]> {
+  const r = await rows("tests");
+  if (!r) return [];
+  return r
+    .filter((x) => x.published !== false)
+    .map((x) => {
+      const qs = json(x.questions, [] as { q: string; options: string[]; answer: number[] }[]);
+      return {
+        slug: str(x.slug),
+        title: str(x.title),
+        subject: str(x.subject),
+        description: str(x.description),
+        passPct: Number(x.passPct) || 70,
+        count: qs.length,
+        questions: qs.map(({ q, options, answer }) => ({ q, options, multiple: (answer ?? []).length > 1 })),
+      };
+    })
+    .filter((t) => t.slug && t.count);
+}
+
+export async function getTest(slug: string) {
+  return (await getTests()).find((t) => t.slug === slug) ?? null;
 }

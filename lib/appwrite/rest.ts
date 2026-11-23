@@ -34,3 +34,19 @@ export async function createRow(table: string, data: Record<string, unknown>) {
   if (!res.ok) throw new Error(`Appwrite create ${table}: ${res.status} ${await res.text()}`);
   return (await res.json()) as Row;
 }
+
+/** Envoi anonyme d'un fichier dans un bucket qui autorise create("any") (ex. photos d'avis). */
+export async function uploadPublicFile(bucketId: string, file: File) {
+  const fd = new FormData();
+  fd.append("fileId", "unique()");
+  fd.append("file", file, file.name || "photo.jpg");
+  const res = await fetch(`${APPWRITE_ENDPOINT}/storage/buckets/${bucketId}/files`, {
+    method: "POST",
+    headers: { "X-Appwrite-Project": APPWRITE_PROJECT },
+    body: fd,
+    cache: "no-store",
+  });
+  if (!res.ok) throw new Error(`Appwrite upload: ${res.status} ${await res.text()}`);
+  const f = (await res.json()) as { $id: string };
+  return `${APPWRITE_ENDPOINT}/storage/buckets/${bucketId}/files/${f.$id}/view?project=${APPWRITE_PROJECT}`;
+}

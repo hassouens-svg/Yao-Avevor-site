@@ -32,6 +32,8 @@ export const footerNav = {
     { href: "/outils", label: "Simulateurs" },
     { href: "/ressources", label: "Ressources" },
     { href: "/temoignages", label: "Témoignages" },
+    { href: "/tests", label: "Tests & quiz" },
+    { href: "/avis", label: "Laisser un avis" },
   ],
   legal: [
     { href: "/contact", label: "Contact" },

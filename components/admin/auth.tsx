@@ -15,6 +15,8 @@ import {
   PanelsTopLeft,
   Users,
   ExternalLink,
+  Star,
+  ClipboardCheck,
 } from "lucide-react";
 import { account, errorMessage, teams } from "@/lib/appwrite/browser";
 import { ADMIN_TEAM } from "@/lib/appwrite/config";
@@ -32,7 +34,9 @@ const nav = [
   { href: "/admin/contenus", label: "Textes des pages", icon: PanelsTopLeft },
   { href: "/admin/articles", label: "Articles", icon: FileText },
   { href: "/admin/livres", label: "Livres", icon: BookOpen },
+  { href: "/admin/avis", label: "Avis à valider", icon: Star },
   { href: "/admin/temoignages", label: "Témoignages & vidéos", icon: MessageSquareQuote },
+  { href: "/admin/tests", label: "Tests & quiz", icon: ClipboardCheck },
   { href: "/admin/medias", label: "Médias", icon: ImageIcon },
   { href: "/admin/abonnes", label: "Abonnés", icon: Users },
   { href: "/admin/messages", label: "Messages", icon: Mail },
