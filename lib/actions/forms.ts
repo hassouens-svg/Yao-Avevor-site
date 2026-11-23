@@ -3,6 +3,7 @@
 import { contactSchema, flattenErrors, subscribeSchema, type FormState } from "@/lib/validations/forms";
 import { createRow } from "@/lib/appwrite/rest";
 import { ADMIN_EMAIL, btn, esc, layout, p, sendEmail } from "@/lib/email";
+import { contactAckEmail, welcomeEmail } from "@/lib/email/templates";
 import { site } from "@/lib/site";
 
 /**
@@ -38,12 +39,18 @@ export async function subscribe(_prev: FormState, formData: FormData): Promise<F
       status: "confirmed",
       consentAt: new Date().toISOString(),
     });
+    await sendEmail({ to: d.email, ...welcomeEmail(d.email, d.firstName ?? "", d.segments) });
+    await sendEmail({
+      to: ADMIN_EMAIL,
+      subject: `Nouvel abonné : ${d.email}`,
+      html: layout("Nouvel abonné", p(`${esc(d.firstName || "—")} · ${esc(d.email)}`) + p(`Intérêts : ${esc(d.segments.join(", ") || "—")}`) + btn("Voir les abonnés", `${site.url}/admin/abonnes`)),
+    });
   } catch {
     return { status: "error", message: "Un problème technique est survenu. Merci de réessayer dans un instant." };
   }
   return {
     status: "success",
-    message: "Merci ! Votre inscription est bien enregistrée.",
+    message: "Merci ! Votre inscription est confirmée : un email de bienvenue vient de vous être envoyé.",
   };
 }
 
@@ -70,6 +77,7 @@ export async function sendContact(_prev: FormState, formData: FormData): Promise
       subject: `${d.reason} — nouveau message de ${d.name}`,
       html: layout(`Nouveau message : ${esc(d.reason)}`, p(`<strong>${esc(d.name)}</strong> (${esc(d.email)})`) + p(esc(d.message).replace(/\n/g, "<br>")) + btn("Ouvrir les messages", `${site.url}/admin/messages`)),
     });
+    await sendEmail({ to: d.email, ...contactAckEmail(d.name, d.reason, d.message) });
   } catch {
     return { status: "error", message: "Un problème technique est survenu. Merci de réessayer, ou écrivez directement à aveveyao@yahoo.com." };
   }

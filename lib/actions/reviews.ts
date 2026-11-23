@@ -4,6 +4,7 @@ import { z } from "zod";
 import { createRow, uploadPublicFile } from "@/lib/appwrite/rest";
 import { ADMIN_EMAIL, btn, esc, layout, p, sendEmail } from "@/lib/email";
 import { site } from "@/lib/site";
+import { reviewThanksEmail } from "@/lib/email/templates";
 import { flattenErrors, type FormState } from "@/lib/validations/forms";
 
 const schema = z.object({
@@ -60,6 +61,8 @@ export async function submitReview(_prev: FormState, fd: FormData): Promise<Form
         btn("Valider dans l’admin", `${site.url}/admin/avis`),
     ),
   });
+
+  if (d.email) await sendEmail({ to: d.email, ...reviewThanksEmail(d.firstName) });
 
   return { status: "success", message: "Merci pour votre avis ! Il sera publié après validation." };
 }

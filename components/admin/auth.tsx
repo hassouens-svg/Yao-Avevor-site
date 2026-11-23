@@ -17,6 +17,7 @@ import {
   ExternalLink,
   Star,
   ClipboardCheck,
+  Send,
 } from "lucide-react";
 import { account, errorMessage, teams } from "@/lib/appwrite/browser";
 import { ADMIN_TEAM } from "@/lib/appwrite/config";
@@ -38,6 +39,7 @@ const nav = [
   { href: "/admin/temoignages", label: "Témoignages & vidéos", icon: MessageSquareQuote },
   { href: "/admin/tests", label: "Tests & quiz", icon: ClipboardCheck },
   { href: "/admin/medias", label: "Médias", icon: ImageIcon },
+  { href: "/admin/newsletter", label: "Newsletter", icon: Send },
   { href: "/admin/abonnes", label: "Abonnés", icon: Users },
   { href: "/admin/messages", label: "Messages", icon: Mail },
 ];

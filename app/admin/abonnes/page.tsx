@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { Download, Trash2 } from "lucide-react";
 import { DB_ID, Query, errorMessage, tables } from "@/lib/appwrite/browser";
 import { Btn, Card, useToast } from "@/components/admin/ui";
+import { effectiveSubscribers } from "@/lib/admin/subscribers";
 
 type Sub = { $id: string; $createdAt: string; email: string; firstName?: string; segments?: string; status?: string };
 
@@ -13,7 +14,7 @@ export default function AbonnesPage() {
   const load = useCallback(async () => {
     try {
       const r = await tables.listRows({ databaseId: DB_ID, tableId: "subscribers", queries: [Query.limit(1000), Query.orderDesc("$createdAt")] });
-      setRows(r.rows as unknown as Sub[]);
+      setRows(effectiveSubscribers(r.rows as unknown as (Sub & { $id: string })[]) as Sub[]);
     } catch (e) {
       toast(errorMessage(e), "error");
       setRows([]);
@@ -25,7 +26,7 @@ export default function AbonnesPage() {
   }, [load]);
 
   function exportCsv() {
-    const lines = [["email", "prenom", "centres_interet", "statut", "date"], ...(rows ?? []).map((r) => [r.email, r.firstName ?? "", r.segments ?? "", r.status ?? "", r.$createdAt.slice(0, 10)])];
+    const lines = [["email", "prenom", "centres_interet", "statut", "date"], ...(rows ?? []).filter((r) => r.status !== "unsubscribed").map((r) => [r.email, r.firstName ?? "", r.segments ?? "", r.status ?? "", r.$createdAt.slice(0, 10)])];
     const csv = lines.map((l) => l.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(";")).join("\n");
     const a = document.createElement("a");
     a.href = URL.createObjectURL(new Blob(["﻿" + csv], { type: "text/csv;charset=utf-8" }));
@@ -45,7 +46,7 @@ export default function AbonnesPage() {
       <Card className="overflow-x-auto p-0 sm:p-0">
         <table className="w-full text-left text-sm">
           <thead className="bg-cloud text-xs text-muted uppercase">
-            <tr><th className="px-4 py-3">Email</th><th className="px-4 py-3">Prénom</th><th className="px-4 py-3">Intérêts</th><th className="px-4 py-3">Date</th><th /></tr>
+            <tr><th className="px-4 py-3">Email</th><th className="px-4 py-3">Prénom</th><th className="px-4 py-3">Intérêts</th><th className="px-4 py-3">Statut</th><th className="px-4 py-3">Date</th><th /></tr>
           </thead>
           <tbody className="divide-y divide-line">
             {(rows ?? []).map((r) => (
@@ -53,9 +54,10 @@ export default function AbonnesPage() {
                 <td className="px-4 py-3 font-medium text-navy-deep">{r.email}</td>
                 <td className="px-4 py-3">{r.firstName}</td>
                 <td className="px-4 py-3 text-muted">{r.segments}</td>
+                <td className="px-4 py-3">{r.status === "unsubscribed" ? <span className="text-xs text-[#c2410c]">Désinscrit</span> : <span className="text-xs text-teal">Abonné</span>}</td>
                 <td className="px-4 py-3 text-muted">{new Date(r.$createdAt).toLocaleDateString("fr-FR")}</td>
                 <td className="px-4 py-3 text-right">
-                  <button type="button" aria-label="Supprimer" className="text-[#9b1c1c]" onClick={async () => { if (!confirm(`Supprimer ${r.email} ?`)) return; await tables.deleteRow({ databaseId: DB_ID, tableId: "subscribers", rowId: r.$id }); load(); }}><Trash2 className="size-4" /></button>
+                  <button type="button" aria-label="Supprimer" className="text-[#9b1c1c]" onClick={async () => { if (!confirm(`Supprimer ${r.email} ?`)) return; for (const id of (r as Sub & { ids?: string[] }).ids ?? [r.$id]) await tables.deleteRow({ databaseId: DB_ID, tableId: "subscribers", rowId: id }); load(); }}><Trash2 className="size-4" /></button>
                 </td>
               </tr>
             ))}
