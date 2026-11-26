@@ -5,6 +5,7 @@ import { Tilt } from "@/components/public/tilt";
 import Link from "next/link";
 import { Star } from "lucide-react";
 import { VideoTestimonial } from "./video-testimonial";
+import { ExpandableQuote } from "./expandable-quote";
 
 /** Témoignages : grille de cartes alternées (marine / bleu ciel) + témoignages vidéo. */
 export function Testimonials({ content, items, hideHeader = false }: { content: HomeContent["testimonials"]; items: Testimonial[]; hideHeader?: boolean }) {
@@ -34,12 +35,12 @@ export function Testimonials({ content, items, hideHeader = false }: { content: 
           {quotes.map((t, i) => {
             const dark = i % 4 === 0 || i % 4 === 3;
             return (
-              <Tilt key={t.name} max={4} className={cn("flex flex-col justify-between rounded-md p-8 sm:p-10", dark ? "bg-navy-deep text-white" : "bg-sky-soft text-navy-deep")}>
+              <Tilt key={t.name} max={4} className={cn("flex flex-col justify-between self-start rounded-md p-8 sm:p-10", dark ? "bg-navy-deep text-white" : "bg-sky-soft text-navy-deep")}>
                 <figure>
                   <span aria-hidden="true" className={cn("display block text-5xl leading-none", dark ? "text-sky" : "text-blue")}>
                     “
                   </span>
-                  <blockquote className="mt-4 text-[1.1875rem] leading-[1.5] font-medium">{t.quote}</blockquote>
+                  <ExpandableQuote text={t.quote} dark={dark} />
                   {t.rating ? (
                     <p className="mt-5 flex gap-0.5" aria-label={`Note : ${t.rating} sur 5`}>
                       {[1, 2, 3, 4, 5].map((n) => (

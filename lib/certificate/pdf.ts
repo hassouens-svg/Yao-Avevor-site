@@ -1,7 +1,5 @@
 import "server-only";
-import { readFile } from "node:fs/promises";
-import path from "node:path";
-import { PDFDocument, StandardFonts, degrees, rgb, type PDFFont } from "pdf-lib";
+import { PDFDocument, StandardFonts, rgb, type PDFFont } from "pdf-lib";
 import type { CertData } from "./index";
 
 const NAVY = rgb(7 / 255, 21 / 255, 40 / 255);
@@ -37,7 +35,6 @@ function wrap(text: string, font: PDFFont, size: number, max: number) {
 export async function renderCertificate(c: CertData) {
   const doc = await PDFDocument.create();
   doc.setTitle(clean(`${c.k === "training" ? "Attestation de fin de formation" : "Attestation de réussite"} — ${c.n}`));
-  doc.setAuthor("Yao AVEVOR");
   const page = doc.addPage([842, 595]); // A4 paysage
   const W = page.getWidth(), H = page.getHeight();
   const bold = await doc.embedFont(StandardFonts.HelveticaBold);
@@ -51,9 +48,6 @@ export async function renderCertificate(c: CertData) {
   page.drawRectangle({ x: 0, y: 0, width: 96, height: H, color: NAVY });
   page.drawRectangle({ x: 96, y: 0, width: 5, height: H, color: COPPER });
   page.drawRectangle({ x: 125, y: 24, width: W - 149, height: H - 48, borderColor: LINE, borderWidth: 1 });
-
-  // Monogramme vertical
-  page.drawText("YAO AVEVOR", { x: 58, y: 150, size: 22, font: bold, color: rgb(1, 1, 1), rotate: degrees(90) });
 
   const cx0 = 101, cw = W - 101;
   const mid = (t: string, y: number, f: PDFFont, s: number, col = NAVY, sp = 0) => {
@@ -96,16 +90,10 @@ export async function renderCertificate(c: CertData) {
   page.drawText(sealTxt, { x: sx - bold.widthOfTextAtSize(sealTxt, 8) / 2, y: sy + 6, size: 8, font: bold, color: rgb(1, 1, 1) });
   page.drawText("VALIDÉE", { x: sx - bold.widthOfTextAtSize("VALIDÉE", 8) / 2, y: sy - 8, size: 8, font: bold, color: rgb(1, 1, 1) });
 
-  // Signature + photo
+  // Référence (sans signature ni nom : document pédagogique, non officiel)
   page.drawLine({ start: { x: 150, y: 88 }, end: { x: W - 60, y: 88 }, thickness: 0.6, color: LINE });
-  try {
-    const jpg = await doc.embedJpg(await readFile(path.join(process.cwd(), "public/images/email-yao.jpg")));
-    page.drawImage(jpg, { x: 150, y: 38, width: 40, height: 40 });
-  } catch {}
-  page.drawText("Yao AVEVOR, Ph.D, PMP®", { x: 200, y: 62, size: 11, font: bold, color: NAVY });
-  page.drawText("Formateur PMP® (PMI ATP) · Gestion de projets industriels", { x: 200, y: 48, size: 8.5, font: reg, color: MUTED });
-  const ref = `N° ${c.id} · yaoavevor.com`;
-  page.drawText(ref, { x: W - 60 - reg.widthOfTextAtSize(ref, 7.5), y: 48, size: 7.5, font: reg, color: MUTED });
+  const ref = `N° ${c.id}`;
+  page.drawText(ref, { x: W - 60 - reg.widthOfTextAtSize(ref, 7.5), y: 66, size: 7.5, font: reg, color: MUTED });
 
   return doc.save();
 }
