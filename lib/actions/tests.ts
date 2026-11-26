@@ -70,7 +70,7 @@ export async function gradeTest(slug: string, who: { firstName: string; lastName
     });
     const ref = `${now.slice(2, 10).replace(/-/g, "")}-${Math.random().toString(36).slice(2, 7).toUpperCase()}`;
     certUrl = certificateUrl({ k: certType, n: nom, t: title, f: formation, x: text, s: `${score}/${total} (${pct} %)`, d: now, id: ref });
-    certLabel = certType === "training" ? "attestation de fin de formation" : "attestation de réussite";
+    certLabel = certType === "training" ? "certificat de réussite" : "attestation de réussite";
   }
 
   await createRow("test_results", {
@@ -107,7 +107,7 @@ export async function gradeTest(slug: string, who: { firstName: string; lastName
         p(`Voici votre résultat au test <strong>${esc(title)}</strong> :`) +
         `<p style="font-size:36px;font-weight:bold;margin:8px 0;color:${passed ? "#0d7480" : "#c2410c"}">${score} / ${total} · ${pct} %</p>` +
         p(passed ? `Vous avez atteint le seuil de réussite (${passPct} %).` : `Le seuil de réussite est de ${passPct} %. Revoyez les points ci-dessous et retentez votre chance.`) +
-        (certUrl ? p(`Votre <strong>${certLabel}</strong> est prête : téléchargez-la en PDF, imprimez-la ou partagez-la sur LinkedIn.`) + btn(`Télécharger mon ${certLabel}`, certUrl) : "") +
+        (certUrl ? p(`Votre <strong>${certLabel}</strong> est disponible : téléchargez le PDF, imprimez-le ou partagez-le sur LinkedIn.`) + btn(`Télécharger mon ${certLabel}`, certUrl) : "") +
         correctionHtml +
         btn(passed ? "Voir les autres tests" : "Refaire le test", passed ? `${site.url}/tests` : `${site.url}/tests/${slug}`),
     ),

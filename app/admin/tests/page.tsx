@@ -179,14 +179,14 @@ export default function TestsAdmin() {
                 <Toggle checked={edit.published !== false} onChange={(v) => set("published", v)} label="Test en ligne" />
               </div>
               <div className="space-y-4 rounded-md border border-line bg-cloud p-4">
-                <Field label="Attestation téléchargeable (si le seuil est atteint)">
+                <Field label="Document téléchargeable (si le seuil est atteint)">
                   <Select
                     value={edit.certificate || "none"}
                     onChange={(e) => set("certificate", e.target.value)}
                     options={[
                       { value: "none", label: "Pas d’attestation" },
-                      { value: "quiz", label: "Attestation de réussite du test" },
-                      { value: "training", label: "Attestation de fin de formation" },
+                      { value: "quiz", label: "Attestation de réussite du test (quiz seul)" },
+                      { value: "training", label: "Certificat de réussite à une formation" },
                     ]}
                   />
                 </Field>

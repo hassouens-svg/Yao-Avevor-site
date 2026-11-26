@@ -118,7 +118,7 @@ export function QuizRunner({ test }: { test: PublicTest }) {
         )}
         {result.certificateUrl && (
           <div className="flex flex-col items-start gap-3 rounded-md border border-line bg-cloud p-6 sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-sm text-navy-deep">Votre <strong>{result.certificateLabel}</strong> est prête.</p>
+            <p className="text-sm text-navy-deep">Votre <strong>{result.certificateLabel}</strong> est disponible.</p>
             <a href={result.certificateUrl} className="inline-flex h-11 items-center gap-2 rounded-full bg-navy-deep px-5 text-sm font-semibold text-white transition-colors hover:bg-copper">
               <Download className="size-4" /> Télécharger (PDF)
             </a>

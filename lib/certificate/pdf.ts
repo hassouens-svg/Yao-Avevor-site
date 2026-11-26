@@ -34,7 +34,7 @@ function wrap(text: string, font: PDFFont, size: number, max: number) {
 
 export async function renderCertificate(c: CertData) {
   const doc = await PDFDocument.create();
-  doc.setTitle(clean(`${c.k === "training" ? "Attestation de fin de formation" : "Attestation de réussite"} — ${c.n}`));
+  doc.setTitle(clean(`${c.k === "training" ? "Certificat de réussite" : "Attestation de réussite"} — ${c.n}`));
   const page = doc.addPage([842, 595]); // A4 paysage
   const W = page.getWidth(), H = page.getHeight();
   const bold = await doc.embedFont(StandardFonts.HelveticaBold);
@@ -59,10 +59,18 @@ export async function renderCertificate(c: CertData) {
   };
 
   mid("CONCEPTION · MANAGEMENT · PILOTAGE · INNOVATION", H - 70, reg, 8, MUTED, 1.6);
-  mid(c.k === "training" ? "ATTESTATION DE FIN DE FORMATION" : "ATTESTATION DE RÉUSSITE", H - 125, bold, 30, NAVY, 0.5);
-  page.drawRectangle({ x: cx0 + cw / 2 - 40, y: H - 145, width: 80, height: 3, color: COPPER });
-
-  mid("Décernée à", H - 190, ital, 13, MUTED);
+  if (c.k === "training") {
+    mid("CERTIFICAT DE RÉUSSITE", H - 118, bold, 30, NAVY, 0.5);
+    const sub = clean(`à la formation « ${c.f || c.t} »`);
+    const subSize = Math.min(15, (cw - 140) / Math.max(1, reg.widthOfTextAtSize(sub, 1)));
+    mid(sub, H - 147, reg, subSize, BLUE);
+    page.drawRectangle({ x: cx0 + cw / 2 - 40, y: H - 166, width: 80, height: 3, color: COPPER });
+    mid("Décerné à", H - 192, ital, 13, MUTED);
+  } else {
+    mid("ATTESTATION DE RÉUSSITE", H - 125, bold, 30, NAVY, 0.5);
+    page.drawRectangle({ x: cx0 + cw / 2 - 40, y: H - 145, width: 80, height: 3, color: COPPER });
+    mid("Décernée à", H - 190, ital, 13, MUTED);
+  }
   const name = clean(c.n);
   const nameSize = Math.min(40, (cw - 120) / Math.max(1, bold.widthOfTextAtSize(name, 1)));
   mid(name, H - 240, bold, nameSize, BLUE);
@@ -78,7 +86,7 @@ export async function renderCertificate(c: CertData) {
     page.drawText(clean(value), { x, y: infoY, size: 11.5, font: reg, color: NAVY });
   };
   const date = new Date(c.d).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
-  col(c.k === "training" ? "Test de fin de formation" : "Test", c.t.length > 42 ? c.t.slice(0, 40) + "…" : c.t, 150);
+  col(c.k === "training" ? "Test final" : "Test", c.t.length > 42 ? c.t.slice(0, 40) + "…" : c.t, 150);
   col("Score", c.s, 430);
   col("Date", date, 540);
 
