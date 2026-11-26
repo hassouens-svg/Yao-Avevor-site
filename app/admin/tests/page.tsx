@@ -5,11 +5,11 @@ import { ChevronLeft, Download, Plus, Trash2 } from "lucide-react";
 import { DB_ID, ID, Query, errorMessage, tables } from "@/lib/appwrite/browser";
 import { refreshSite } from "@/lib/actions/refresh";
 import { parseQuiz, type QuizQuestion } from "@/lib/quiz/parse";
-import { Btn, Card, Field, TextArea, TextInput, Toggle, useToast } from "@/components/admin/ui";
+import { Btn, Card, Field, Select, TextArea, TextInput, Toggle, useToast } from "@/components/admin/ui";
 import { ShareLink } from "@/components/admin/share-link";
 import { cn } from "@/lib/cn";
 
-type TestRow = { $id: string; slug: string; title: string; subject?: string; description?: string; passPct?: number; questions?: string; source?: string; showCorrection?: boolean; published?: boolean };
+type TestRow = { $id: string; slug: string; title: string; subject?: string; description?: string; passPct?: number; questions?: string; source?: string; showCorrection?: boolean; published?: boolean; certificate?: string; trainingName?: string; certificateText?: string };
 type Result = { $id: string; $createdAt: string; testSlug: string; firstName: string; lastName: string; email: string; score: number; total: number; pct: number; passed: boolean };
 
 const EXAMPLE = `1. Qui est responsable de prioriser le Product Backlog ?
@@ -88,6 +88,9 @@ export default function TestsAdmin() {
       questions: JSON.stringify(parsed.questions),
       showCorrection: edit.showCorrection !== false,
       published: edit.published !== false,
+      certificate: edit.certificate || "none",
+      trainingName: edit.trainingName ?? "",
+      certificateText: edit.certificateText ?? "",
     };
     setSaving(true);
     try {
@@ -174,6 +177,39 @@ export default function TestsAdmin() {
               <div className="flex flex-wrap gap-6">
                 <Toggle checked={edit.showCorrection !== false} onChange={(v) => set("showCorrection", v)} label="Montrer la correction à la fin" />
                 <Toggle checked={edit.published !== false} onChange={(v) => set("published", v)} label="Test en ligne" />
+              </div>
+              <div className="space-y-4 rounded-md border border-line bg-cloud p-4">
+                <Field label="Attestation téléchargeable (si le seuil est atteint)">
+                  <Select
+                    value={edit.certificate || "none"}
+                    onChange={(e) => set("certificate", e.target.value)}
+                    options={[
+                      { value: "none", label: "Pas d’attestation" },
+                      { value: "quiz", label: "Attestation de réussite du test" },
+                      { value: "training", label: "Attestation de fin de formation" },
+                    ]}
+                  />
+                </Field>
+                {edit.certificate === "training" && (
+                  <Field label="Nom de la formation suivie"><TextInput value={edit.trainingName ?? ""} onChange={(e) => set("trainingName", e.target.value)} placeholder="Ex. Gestion de projet — les fondamentaux" /></Field>
+                )}
+                {edit.certificate && edit.certificate !== "none" && (
+                  <Field
+                    label="Texte de l’attestation (facultatif)"
+                    hint="Laissez vide pour le texte par défaut. Mots remplacés automatiquement : {nom}, {formation}, {test}, {score}, {date}."
+                  >
+                    <TextArea
+                      rows={4}
+                      value={edit.certificateText ?? ""}
+                      onChange={(e) => set("certificateText", e.target.value)}
+                      placeholder={
+                        edit.certificate === "training"
+                          ? "{nom} a suivi l’ensemble des modules de la formation « {formation} » et a réussi le test de fin de formation avec un score de {score}. Cette réussite atteste de l’assimilation des connaissances théoriques nécessaires pour cadrer, planifier, piloter et clôturer un projet."
+                          : "{nom} a réussi le test « {test} » avec un score de {score}, attestant de sa bonne maîtrise des notions évaluées."
+                      }
+                    />
+                  </Field>
+                )}
               </div>
               <Field label="Questions et réponses (copier-coller)" hint="Une question, ses propositions A) B) C)…, puis « Réponse : B » (ou « Réponses : A, C »). « Explication : … » est facultatif. Laissez une ligne vide entre les questions.">
                 <TextArea className="min-h-[28rem] font-mono text-[13px]" value={edit.source ?? ""} onChange={(e) => set("source", e.target.value)} placeholder={EXAMPLE} />

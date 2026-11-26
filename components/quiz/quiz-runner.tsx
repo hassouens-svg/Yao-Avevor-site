@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowLeft, ArrowRight, Check, X } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, X, Download } from "lucide-react";
 import { gradeTest, type TestResult } from "@/lib/actions/tests";
 import type { PublicTest } from "@/lib/content";
 import { cn } from "@/lib/cn";
@@ -86,7 +86,15 @@ export function QuizRunner({ test }: { test: PublicTest }) {
           <p className="mt-2 text-ink/80">
             {result.passed ? `Bravo ${who.firstName}, vous dépassez le seuil de ${result.passPct} %.` : `Le seuil de réussite est de ${result.passPct} %. Revoyez les points ci-dessous et retentez votre chance.`}
           </p>
-          <p className="mt-2 text-sm text-muted">Votre résultat vous a été envoyé à {who.email}.</p>
+          {result.certificateUrl && (
+            <a
+              href={result.certificateUrl}
+              className="mt-6 inline-flex h-12 items-center gap-2 rounded-full bg-navy-deep px-6 text-sm font-semibold text-white transition-colors hover:bg-copper"
+            >
+              <Download className="size-4" /> Télécharger mon {result.certificateLabel} (PDF)
+            </a>
+          )}
+          <p className="mt-4 text-sm text-muted">Votre résultat{result.certificateUrl ? " et le lien de votre attestation vous ont été envoyés" : " vous a été envoyé"} à {who.email}.</p>
         </div>
         {result.corrections && (
           <ol className="space-y-4">

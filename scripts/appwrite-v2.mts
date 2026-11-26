@@ -76,6 +76,9 @@ await table("tests", "Tests", publicRead, [
   ["questions", "longtext"],
   ["showCorrection", "bool"],
   ["published", "bool"],
+  ["certificate", "varchar", 20],
+  ["trainingName", "varchar", 300],
+  ["certificateText", "text"],
 ]);
 
 // Résultats des tests

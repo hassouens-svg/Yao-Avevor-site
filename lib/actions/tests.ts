@@ -5,6 +5,7 @@ import { createRow, listRows } from "@/lib/appwrite/rest";
 import { ADMIN_EMAIL, btn, esc, layout, p, sendEmail } from "@/lib/email";
 import type { QuizQuestion } from "@/lib/quiz/parse";
 import { site } from "@/lib/site";
+import { DEFAULT_TEXTS, certificateUrl, fillText, type CertType } from "@/lib/certificate";
 
 const identity = z.object({
   firstName: z.string().trim().min(1).max(80),
@@ -20,6 +21,8 @@ export type TestResult = {
   pct?: number;
   passed?: boolean;
   passPct?: number;
+  certificateUrl?: string;
+  certificateLabel?: string;
   corrections?: { q: string; options: string[]; answer: number[]; given: number[]; correct: boolean; explanation?: string }[];
 };
 
@@ -49,6 +52,26 @@ export async function gradeTest(slug: string, who: { firstName: string; lastName
   const passed = pct >= passPct;
   const title = String(row.title);
   const d = id.data;
+
+  // Attestation (si le test en propose une et que le seuil est atteint)
+  const certType = (String(row.certificate || "none") as CertType);
+  let certUrl: string | undefined;
+  let certLabel: string | undefined;
+  if (passed && certType !== "none") {
+    const nom = `${d.firstName} ${d.lastName.toUpperCase()}`;
+    const formation = String(row.trainingName || title);
+    const now = new Date().toISOString();
+    const text = fillText(String(row.certificateText || "").trim() || DEFAULT_TEXTS[certType], {
+      nom,
+      formation,
+      test: title,
+      score: `${pct} %`,
+      date: new Date(now).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" }),
+    });
+    const ref = `${now.slice(2, 10).replace(/-/g, "")}-${Math.random().toString(36).slice(2, 7).toUpperCase()}`;
+    certUrl = certificateUrl({ k: certType, n: nom, t: title, f: formation, x: text, s: `${score}/${total} (${pct} %)`, d: now, id: ref });
+    certLabel = certType === "training" ? "attestation de fin de formation" : "attestation de réussite";
+  }
 
   await createRow("test_results", {
     testSlug: slug,
@@ -84,8 +107,9 @@ export async function gradeTest(slug: string, who: { firstName: string; lastName
         p(`Voici votre résultat au test <strong>${esc(title)}</strong> :`) +
         `<p style="font-size:36px;font-weight:bold;margin:8px 0;color:${passed ? "#0d7480" : "#c2410c"}">${score} / ${total} · ${pct} %</p>` +
         p(passed ? `Vous avez atteint le seuil de réussite (${passPct} %).` : `Le seuil de réussite est de ${passPct} %. Revoyez les points ci-dessous et retentez votre chance.`) +
+        (certUrl ? p(`Votre <strong>${certLabel}</strong> est prête : téléchargez-la en PDF, imprimez-la ou partagez-la sur LinkedIn.`) + btn(`Télécharger mon ${certLabel}`, certUrl) : "") +
         correctionHtml +
-        btn("Refaire le test", `${site.url}/tests/${slug}`),
+        btn(passed ? "Voir les autres tests" : "Refaire le test", passed ? `${site.url}/tests` : `${site.url}/tests/${slug}`),
     ),
   });
   await sendEmail({
@@ -95,5 +119,5 @@ export async function gradeTest(slug: string, who: { firstName: string; lastName
     html: layout("Nouveau résultat de test", p(`${esc(d.firstName)} ${esc(d.lastName)} (${esc(d.email)}) : <strong>${score}/${total} — ${pct} %</strong> ${passed ? "✅ réussi" : "❌ non réussi"}`) + btn("Voir les résultats", `${site.url}/admin/tests`)),
   });
 
-  return { ok: true, score, total, pct, passed, passPct, corrections: showCorrection ? corrections : undefined };
+  return { ok: true, score, total, pct, passed, passPct, certificateUrl: certUrl, certificateLabel: certLabel, corrections: showCorrection ? corrections : undefined };
 }
