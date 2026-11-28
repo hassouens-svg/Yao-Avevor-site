@@ -84,6 +84,7 @@ await table("tests", "Tests", publicRead, [
   ["maxExits", "int"],
   ["shuffle", "bool"],
   ["mode", "varchar", 10],
+  ["requireAll", "bool"],
   ["liveState", "varchar", 10],
   ["liveSession", "varchar", 40],
   ["liveStartAt", "varchar", 40],

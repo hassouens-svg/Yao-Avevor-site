@@ -108,9 +108,15 @@ export function LiveConsole({ test: initial }: { test: TestLite }) {
         <div className="space-y-3 text-sm">
           <p className="label-caps text-muted">Partager l’examen</p>
           <p className="font-mono text-navy-deep break-all">{url}</p>
-          <p className="text-muted">Les participants scannent le QR code (ou ouvrent le lien), saisissent leur nom et leur email, puis{live ? " attendent votre lancement." : " passent l’examen à leur rythme, avec leur propre chrono."}</p>
+          <p className="text-muted">Les participants scannent le QR code (ou ouvrent le lien), saisissent leur nom et leur email, puis{live ? " attendent votre lancement." : " passent l’examen à leur rythme."}</p>
           {!test.published && <p className="rounded-md bg-[#fff7ed] p-3 text-[#9b1c1c]">Ce test n’est pas affiché sur le site : activez « Afficher sur la page publique » dans l’onglet Questions et enregistrez.</p>}
-          {!live && <p className="rounded-md bg-cloud p-3 text-muted">Mode actuel : <strong>chacun commence quand il veut</strong>. Pour lancer l’examen vous-même pour tout le monde, choisissez « Session en direct » dans l’onglet Questions, ou ouvrez directement la salle d’attente ci-dessous.</p>}
+          <p className="rounded-md bg-cloud p-3 text-muted">
+            {live ? (
+              <>Session en direct : les participants arrivent dans la salle d’attente. Cliquez sur <strong>« Lancer l’examen pour tous »</strong> : le chrono démarre pour tout le monde et l’examen se termine pour tout le monde à la même heure. « Fermer la session » remet le test en accès libre.</>
+            ) : (
+              <>Accès libre : chacun commence quand il veut, avec son propre chrono. Pour un examen en groupe, cliquez sur <strong>« Ouvrir la salle d’attente »</strong> ci-dessous, partagez le QR code, puis lancez.</>
+            )}
+          </p>
         </div>
       </Card>
 

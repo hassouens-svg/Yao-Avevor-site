@@ -165,7 +165,7 @@ export async function getGallery() {
   return gallery;
 }
 
-export type PublicTest = { slug: string; title: string; subject: string; description: string; passPct: number; timeLimit: number; mode: "self" | "live"; antiCheat: boolean; maxExits: number; shuffle: boolean; count: number; questions: { q: string; options: string[]; multiple: boolean }[] };
+export type PublicTest = { slug: string; title: string; subject: string; description: string; passPct: number; timeLimit: number; mode: "self" | "live"; antiCheat: boolean; maxExits: number; shuffle: boolean; requireAll: boolean; count: number; questions: { q: string; options: string[]; multiple: boolean }[] };
 
 /** Tests publiés, sans les bonnes réponses (la correction se fait côté serveur). */
 export async function getTests(): Promise<PublicTest[]> {
@@ -186,6 +186,7 @@ export async function getTests(): Promise<PublicTest[]> {
         antiCheat: x.antiCheat === true,
         maxExits: Math.max(0, Number(x.maxExits) || 0),
         shuffle: x.shuffle === true,
+        requireAll: x.requireAll === true,
         count: qs.length,
         // En direct, les questions ne sont envoyées qu'au lancement de l'examen
         questions: x.mode === "live" ? [] : qs.map(({ q, options, answer }) => ({ q, options, multiple: (answer ?? []).length > 1 })),

@@ -10,7 +10,7 @@ import { ShareLink } from "@/components/admin/share-link";
 import { LiveConsole } from "@/components/admin/live-console";
 import { cn } from "@/lib/cn";
 
-type TestRow = { $id: string; slug: string; title: string; subject?: string; description?: string; passPct?: number; questions?: string; source?: string; showCorrection?: boolean; published?: boolean; certificate?: string; trainingName?: string; certificateText?: string; timeLimit?: number; antiCheat?: boolean; maxExits?: number; shuffle?: boolean; mode?: string; liveState?: string; liveSession?: string; liveStartAt?: string; liveEndAt?: string };
+type TestRow = { $id: string; slug: string; title: string; subject?: string; description?: string; passPct?: number; questions?: string; source?: string; showCorrection?: boolean; published?: boolean; certificate?: string; trainingName?: string; certificateText?: string; timeLimit?: number; antiCheat?: boolean; maxExits?: number; shuffle?: boolean; requireAll?: boolean; mode?: string; liveState?: string; liveSession?: string; liveStartAt?: string; liveEndAt?: string };
 type Result = { $id: string; $createdAt: string; testSlug: string; firstName: string; lastName: string; email: string; score: number; total: number; pct: number; passed: boolean; exits?: number; durationSec?: number; status?: string; answers?: string; sessionId?: string };
 const dur = (s?: number) => (s ? `${Math.floor(s / 60)} min ${String(s % 60).padStart(2, "0")}` : "—");
 
@@ -98,7 +98,7 @@ export default function TestsAdmin() {
       antiCheat: edit.antiCheat === true,
       maxExits: Math.max(0, Math.round(Number(edit.maxExits) || 0)),
       shuffle: edit.shuffle === true,
-      mode: edit.mode === "live" ? "live" : "self",
+      requireAll: edit.requireAll === true,
     };
     setSaving(true);
     try {
@@ -193,16 +193,10 @@ export default function TestsAdmin() {
               </div>
               <div className="space-y-4 rounded-md border border-line bg-cloud p-4">
                 <p className="text-sm font-semibold text-navy-deep">Conditions d’examen</p>
-                <Field label="Déroulement">
-                  <Select
-                    value={edit.mode === "live" ? "live" : "self"}
-                    onChange={(e) => set("mode", e.target.value)}
-                    options={[
-                      { value: "self", label: "Chacun commence quand il veut (chrono individuel)" },
-                      { value: "live", label: "Session en direct : je lance l’examen pour tout le monde (fin commune)" },
-                    ]}
-                  />
-                </Field>
+                <p className="rounded-md bg-white p-3 text-xs text-muted">
+                  Par défaut, chacun passe le test quand il veut avec son propre chrono. Pour faire passer l’examen à tout le monde en même temps,
+                  ouvrez la salle d’attente dans l’onglet « Partager · QR · Session en direct » puis cliquez sur « Lancer ».
+                </p>
                 <div className="grid gap-4 sm:grid-cols-2">
                   <Field label="Durée (minutes)" hint="0 = pas de chrono. À la fin, le test est envoyé automatiquement.">
                     <TextInput type="number" min={0} max={600} value={edit.timeLimit ?? 0} onChange={(e) => set("timeLimit", Number(e.target.value))} />
@@ -216,6 +210,7 @@ export default function TestsAdmin() {
                 <div className="flex flex-col gap-3">
                   <Toggle checked={edit.antiCheat === true} onChange={(v) => set("antiCheat", v)} label="Examen surveillé : sortie de l’écran détectée, copier-coller bloqué, écran maintenu allumé, plein écran sur ordinateur" />
                   <Toggle checked={edit.shuffle === true} onChange={(v) => set("shuffle", v)} label="Mélanger l’ordre des questions et des réponses pour chaque participant" />
+                  <Toggle checked={edit.requireAll === true} onChange={(v) => set("requireAll", v)} label="Toutes les questions sont obligatoires (impossible de terminer avant d’avoir tout coché)" />
                 </div>
               </div>
               <div className="space-y-4 rounded-md border border-line bg-cloud p-4">

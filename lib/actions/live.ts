@@ -73,9 +73,9 @@ export async function liveControl(jwt: string, slug: string, action: "open" | "s
           ? { liveState: "running", liveStartAt: now.toISOString(), liveEndAt: minutes ? new Date(now.getTime() + minutes * 60_000).toISOString() : "" }
           : action === "end"
             ? { liveState: "ended", liveEndAt: now.toISOString() }
-            : { liveState: "closed" };
+            : { liveState: "closed", mode: "self" }; // session fermée : retour au passage libre
     await adminUpdateRow(jwt, "tests", row.$id, data);
-    if (action === "open") await refreshSite();
+    if (action === "open" || action === "close") await refreshSite();
     return { ok: true, status: statusOf({ ...row, ...data } as Row) };
   } catch (e) {
     return { ok: false, message: (e as Error).message };

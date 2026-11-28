@@ -24,7 +24,7 @@ type WakeLock = { release: () => Promise<void> };
 export function QuizRunner({ test }: { test: PublicTest }) {
   const [step, setStep] = useState<"id" | "rules" | "lobby" | "quiz" | "done">("id");
   const live = test.mode === "live";
-  const guarded = test.antiCheat || test.timeLimit > 0 || live;
+  const guarded = test.antiCheat || test.timeLimit > 0 || live || test.requireAll;
   const [qs, setQs] = useState(test.questions);
   const count = qs.length || test.count;
   // Ordre d'affichage (mélangé si activé) ; les réponses restent stockées dans l'ordre d'origine
@@ -56,6 +56,7 @@ export function QuizRunner({ test }: { test: PublicTest }) {
   const exitsRef = useRef(0);
 
   function toggle(o: number) {
+    setErr(null);
     setAnswers((prev) => prev.map((a, k) => (k !== qi ? a : q.multiple ? (a.includes(o) ? a.filter((x) => x !== o) : [...a, o]) : [o])));
   }
 
@@ -64,7 +65,16 @@ export function QuizRunner({ test }: { test: PublicTest }) {
       if (finished.current) return;
       const current = answersRef.current;
       const missing = count - current.filter((a) => a.length).length;
-      if (ended === "normal" && missing > 0 && !confirm(`${missing} question(s) sans réponse. Terminer quand même ?`)) return;
+      if (ended === "normal" && missing > 0) {
+        if (test.requireAll) {
+          // Questions obligatoires : on renvoie vers la première question sans réponse
+          const first = order.findIndex((orig) => !current[orig]?.length);
+          if (first >= 0) setI(first);
+          setErr(`Toutes les questions sont obligatoires : il reste ${missing} question${missing > 1 ? "s" : ""} sans réponse.`);
+          return;
+        }
+        if (!confirm(`${missing} question(s) sans réponse. Terminer quand même ?`)) return;
+      }
       finished.current = true;
       setBusy(true);
       setErr(null);
@@ -87,7 +97,7 @@ export function QuizRunner({ test }: { test: PublicTest }) {
         setBusy(false);
       }
     },
-    [count, test.slug, who, token],
+    [count, test.slug, test.requireAll, order, who, token],
   );
 
   async function armGuards() {
@@ -240,6 +250,7 @@ export function QuizRunner({ test }: { test: PublicTest }) {
 
   const rules = useMemo(() => {
     const r: string[] = [];
+    if (test.requireAll) r.push("Toutes les questions sont obligatoires : vous ne pourrez terminer qu’après avoir répondu à chacune.");
     if (live) r.push("Session en direct : l’examen démarre pour tout le monde quand le formateur le lance, et se termine pour tout le monde à la même heure.");
     if (test.timeLimit > 0) r.push(`${live ? "Durée de l’examen" : "Vous avez"} ${test.timeLimit} minutes. À la fin du temps, le test est envoyé automatiquement avec vos réponses.`);
     if (test.antiCheat) {
@@ -252,7 +263,7 @@ export function QuizRunner({ test }: { test: PublicTest }) {
       r.push("Avant de commencer : branchez votre appareil, coupez les notifications et prévoyez un moment au calme.");
     }
     return r;
-  }, [test.timeLimit, test.antiCheat, test.maxExits, live]);
+  }, [test.timeLimit, test.antiCheat, test.maxExits, test.requireAll, live]);
 
   const input = "h-12 w-full rounded-md border border-line bg-white px-4 text-[0.9375rem] outline-none focus:border-navy";
 
