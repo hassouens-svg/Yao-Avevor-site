@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AlertTriangle, ArrowLeft, ArrowRight, Check, Clock, Download, ShieldCheck, X } from "lucide-react";
 import { gradeTest, startTest, type TestMeta, type TestResult } from "@/lib/actions/tests";
+import { joinLive, liveStatus, loadQuestions } from "@/lib/actions/live";
 import type { PublicTest } from "@/lib/content";
 import { cn } from "@/lib/cn";
 
@@ -21,11 +22,14 @@ const mmss = (s: number) => `${String(Math.floor(s / 60)).padStart(2, "0")}:${St
 type WakeLock = { release: () => Promise<void> };
 
 export function QuizRunner({ test }: { test: PublicTest }) {
-  const [step, setStep] = useState<"id" | "rules" | "quiz" | "done">("id");
-  const guarded = test.antiCheat || test.timeLimit > 0;
+  const [step, setStep] = useState<"id" | "rules" | "lobby" | "quiz" | "done">("id");
+  const live = test.mode === "live";
+  const guarded = test.antiCheat || test.timeLimit > 0 || live;
+  const [qs, setQs] = useState(test.questions);
+  const count = qs.length || test.count;
   // Ordre d'affichage (mélangé si activé) ; les réponses restent stockées dans l'ordre d'origine
-  const [order, setOrder] = useState(() => test.questions.map((_, k) => k));
-  const [optOrder, setOptOrder] = useState(() => test.questions.map((q) => q.options.map((_, k) => k)));
+  const [order, setOrder] = useState(() => qs.map((_, k) => k));
+  const [optOrder, setOptOrder] = useState(() => qs.map((q) => q.options.map((_, k) => k)));
   const [token, setToken] = useState<string>();
   const [deadline, setDeadline] = useState<number | null>(null);
   const [left, setLeft] = useState<number | null>(null);
@@ -38,12 +42,12 @@ export function QuizRunner({ test }: { test: PublicTest }) {
   const [who, setWho] = useState({ firstName: "", lastName: "", email: "" });
   const [consent, setConsent] = useState(false);
   const [i, setI] = useState(0);
-  const [answers, setAnswers] = useState<number[][]>(() => test.questions.map(() => []));
+  const [answers, setAnswers] = useState<number[][]>(() => qs.map(() => []));
   const [result, setResult] = useState<TestResult | null>(null);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const qi = order[i]; // index d'origine de la question affichée
-  const q = test.questions[qi];
+  const q = qs[qi];
   const answered = answers.filter((a) => a.length).length;
   const answersRef = useRef(answers);
   useEffect(() => {
@@ -59,7 +63,7 @@ export function QuizRunner({ test }: { test: PublicTest }) {
     async (ended: TestMeta["ended"] = "normal") => {
       if (finished.current) return;
       const current = answersRef.current;
-      const missing = test.count - current.filter((a) => a.length).length;
+      const missing = count - current.filter((a) => a.length).length;
       if (ended === "normal" && missing > 0 && !confirm(`${missing} question(s) sans réponse. Terminer quand même ?`)) return;
       finished.current = true;
       setBusy(true);
@@ -83,33 +87,85 @@ export function QuizRunner({ test }: { test: PublicTest }) {
         setBusy(false);
       }
     },
-    [test.count, test.slug, who, token],
+    [count, test.slug, who, token],
   );
+
+  async function armGuards() {
+    if (!test.antiCheat) return;
+    // Écran toujours allumé (téléphone) + plein écran sur ordinateur (doit suivre un clic)
+    try {
+      const nav = navigator as Navigator & { wakeLock?: { request: (t: "screen") => Promise<WakeLock> } };
+      wake.current = (await nav.wakeLock?.request("screen")) ?? null;
+    } catch {}
+    if (window.matchMedia("(pointer: fine)").matches) document.documentElement.requestFullscreen?.().catch(() => {});
+  }
+
+  function prepare(list: typeof qs) {
+    setQs(list);
+    setAnswers(list.map(() => []));
+    // Tirage au démarrage (jamais au rendu) : un ordre différent pour chaque participant
+    setOrder(test.shuffle ? shuffled(list.length) : list.map((_, k) => k));
+    setOptOrder(list.map((x) => (test.shuffle ? shuffled(x.options.length) : x.options.map((_, k) => k))));
+    setI(0);
+  }
 
   async function begin() {
     setBusy(true);
+    setErr(null);
     try {
-      if (test.shuffle) {
-        // Tirage au démarrage (jamais au rendu) : un ordre différent pour chaque participant
-        setOrder(shuffled(test.questions.length));
-        setOptOrder(test.questions.map((q) => shuffled(q.options.length)));
+      if (live) {
+        const r = await joinLive(test.slug, who);
+        if (!r.ok) return setErr(r.message);
+        await armGuards();
+        setStep("lobby");
+        return;
       }
-      const tok = await startTest(test.slug);
-      setToken(tok);
+      prepare(qs);
+      setToken(await startTest(test.slug));
       if (test.timeLimit > 0) setDeadline(Date.now() + test.timeLimit * 60_000);
-      if (test.antiCheat) {
-        // Écran toujours allumé (téléphone) + plein écran sur ordinateur
-        try {
-          const nav = navigator as Navigator & { wakeLock?: { request: (t: "screen") => Promise<WakeLock> } };
-          wake.current = (await nav.wakeLock?.request("screen")) ?? null;
-        } catch {}
-        if (window.matchMedia("(pointer: fine)").matches) document.documentElement.requestFullscreen?.().catch(() => {});
-      }
+      await armGuards();
       setStep("quiz");
     } finally {
       setBusy(false);
     }
   }
+
+  // Session en direct : salle d'attente puis synchronisation de la fin (heure du serveur)
+  const offset = useRef(0);
+  const launching = useRef(false);
+  useEffect(() => {
+    if (!live || (step !== "lobby" && step !== "quiz")) return;
+    let stop = false;
+    const poll = async () => {
+      const st = await liveStatus(test.slug).catch(() => null);
+      if (!st || stop) return;
+      offset.current = st.now - Date.now();
+      const end = st.endAt ? Date.parse(st.endAt) - offset.current : null;
+      if (step === "lobby" && st.state === "running" && !launching.current) {
+        launching.current = true;
+        const list = await loadQuestions(test.slug);
+        if (list && list.length) {
+          prepare(list);
+          setToken(await startTest(test.slug));
+          setDeadline(end);
+          setStep("quiz");
+        }
+        launching.current = false;
+      } else if (step === "lobby" && st.state === "ended") {
+        setErr("La session est terminée.");
+      } else if (step === "quiz") {
+        if (end !== deadline) setDeadline(end);
+        if (st.state === "ended" || st.state === "closed") submit("time");
+      }
+    };
+    poll();
+    const id = setInterval(poll, step === "lobby" ? 2000 : 5000);
+    return () => {
+      stop = true;
+      clearInterval(id);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [live, step, test.slug, deadline, submit]);
 
   // Compte à rebours
   useEffect(() => {
@@ -184,7 +240,8 @@ export function QuizRunner({ test }: { test: PublicTest }) {
 
   const rules = useMemo(() => {
     const r: string[] = [];
-    if (test.timeLimit > 0) r.push(`Vous avez ${test.timeLimit} minutes. À la fin du temps, le test est envoyé automatiquement avec vos réponses.`);
+    if (live) r.push("Session en direct : l’examen démarre pour tout le monde quand le formateur le lance, et se termine pour tout le monde à la même heure.");
+    if (test.timeLimit > 0) r.push(`${live ? "Durée de l’examen" : "Vous avez"} ${test.timeLimit} minutes. À la fin du temps, le test est envoyé automatiquement avec vos réponses.`);
     if (test.antiCheat) {
       r.push(
         test.maxExits === 0
@@ -195,7 +252,7 @@ export function QuizRunner({ test }: { test: PublicTest }) {
       r.push("Avant de commencer : branchez votre appareil, coupez les notifications et prévoyez un moment au calme.");
     }
     return r;
-  }, [test.timeLimit, test.antiCheat, test.maxExits]);
+  }, [test.timeLimit, test.antiCheat, test.maxExits, live]);
 
   const input = "h-12 w-full rounded-md border border-line bg-white px-4 text-[0.9375rem] outline-none focus:border-navy";
 
@@ -225,7 +282,7 @@ export function QuizRunner({ test }: { test: PublicTest }) {
         </label>
         {err && <p className="text-sm text-[#9b1c1c]">{err}</p>}
         <button type="submit" className="inline-flex h-12 items-center gap-2 rounded-full bg-navy-deep px-7 text-sm font-medium text-white hover:bg-blue">
-          {guarded ? "Continuer" : `Commencer le test (${test.count} questions)`} <ArrowRight className="size-4" />
+          {guarded ? "Continuer" : `Commencer le test (${count} questions)`} <ArrowRight className="size-4" />
         </button>
       </form>
     );
@@ -245,13 +302,27 @@ export function QuizRunner({ test }: { test: PublicTest }) {
             </li>
           ))}
         </ul>
-        <p className="text-sm text-muted">{test.count} questions · seuil de réussite {test.passPct} %.</p>
+        <p className="text-sm text-muted">{count} questions · seuil de réussite {test.passPct} %.</p>
+        {err && <p className="text-sm text-[#9b1c1c]">{err}</p>}
         <div className="flex flex-wrap gap-3">
           <button type="button" disabled={busy} onClick={begin} className="inline-flex h-12 items-center gap-2 rounded-full bg-navy-deep px-7 text-sm font-medium text-white hover:bg-blue disabled:opacity-60">
-            {busy ? "…" : "Je suis prêt(e), démarrer"} <ArrowRight className="size-4" />
+            {busy ? "…" : live ? "Rejoindre la session" : "Je suis prêt(e), démarrer"} <ArrowRight className="size-4" />
           </button>
           <button type="button" onClick={() => setStep("id")} className="inline-flex h-12 items-center rounded-full border border-line px-6 text-sm">Retour</button>
         </div>
+      </div>
+    );
+
+  if (step === "lobby")
+    return (
+      <div className="flex flex-col items-center py-8 text-center">
+        <span className="relative flex size-16 items-center justify-center">
+          <span className="absolute inset-0 animate-ping rounded-full bg-copper/25 motion-reduce:hidden" />
+          <span className="relative flex size-16 items-center justify-center rounded-full bg-navy-deep text-white"><Clock className="size-7" /></span>
+        </span>
+        <h2 className="mt-6 text-2xl font-semibold text-navy-deep normal-case" style={{ fontFamily: "var(--font-sans)" }}>Vous êtes dans la salle d’attente</h2>
+        <p className="mt-2 max-w-md text-muted">Bonjour {who.firstName}. L’examen va commencer dès que le formateur le lancera. Restez sur cette page.</p>
+        {err && <p className="mt-4 text-sm text-[#9b1c1c]">{err}</p>}
       </div>
     );
 
@@ -354,11 +425,11 @@ export function QuizRunner({ test }: { test: PublicTest }) {
         </div>
       )}
       <div className="flex items-center justify-between text-sm text-muted">
-        <span className="font-mono">Question {i + 1} / {test.count}</span>
+        <span className="font-mono">Question {i + 1} / {count}</span>
         <span>{answered} répondue(s)</span>
       </div>
       <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-line">
-        <div className="h-full bg-blue transition-[width] duration-300" style={{ width: `${((i + 1) / test.count) * 100}%` }} />
+        <div className="h-full bg-blue transition-[width] duration-300" style={{ width: `${((i + 1) / count) * 100}%` }} />
       </div>
       <h2 className="mt-8 text-[clamp(1.25rem,2.4vw,1.6rem)] leading-snug font-semibold text-navy-deep normal-case" style={{ fontFamily: "var(--font-sans)" }}>
         {q.q}
@@ -388,7 +459,7 @@ export function QuizRunner({ test }: { test: PublicTest }) {
         <button type="button" disabled={i === 0} onClick={() => setI(i - 1)} className="inline-flex h-11 items-center gap-2 rounded-full border border-line px-5 text-sm disabled:opacity-40">
           <ArrowLeft className="size-4" /> Précédente
         </button>
-        {i < test.count - 1 ? (
+        {i < count - 1 ? (
           <button type="button" onClick={() => setI(i + 1)} className="inline-flex h-11 items-center gap-2 rounded-full bg-navy-deep px-6 text-sm text-white hover:bg-blue">
             Suivante <ArrowRight className="size-4" />
           </button>

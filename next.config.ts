@@ -6,6 +6,8 @@ const nextConfig: NextConfig = {
   experimental: {
     serverActions: { bodySizeLimit: "4mb" },
   },
+  // Polices du certificat PDF, lues à l’exécution
+  outputFileTracingIncludes: { "/attestation/pdf": ["./lib/certificate/fonts/**"] },
   images: {
     formats: ["image/avif", "image/webp"],
     qualities: [75, 90],

@@ -34,6 +34,7 @@ export async function startTest(slug: string) {
   return signToken({ slug, t: Date.now() });
 }
 
+
 export type TestMeta = { token?: string; exits?: number; ended?: "normal" | "time" | "exits" };
 
 /** Correction côté serveur : les bonnes réponses ne sont jamais envoyées avant la fin du test. */
@@ -65,10 +66,13 @@ export async function gradeTest(slug: string, who: { firstName: string; lastName
   const started = readToken<{ slug: string; t: number }>(meta.token);
   const durationSec = started && started.slug === slug ? Math.round((Date.now() - started.t) / 1000) : 0;
   const exits = Math.max(0, Math.min(99, Number(meta.exits) || 0));
+  const live = row.mode === "live";
+  const liveEnd = live && row.liveEndAt ? Date.parse(String(row.liveEndAt)) : 0;
   let status = "ok";
   if (meta.ended === "exits") status = "interrompu (sortie de l’écran)";
-  else if (timeLimit && (!started || started.slug !== slug)) status = "chrono non vérifié";
-  else if (timeLimit && durationSec > timeLimit * 60 + 90) status = "hors délai";
+  else if (live && liveEnd && Date.now() > liveEnd + 90_000) status = "hors délai";
+  else if (!live && timeLimit && (!started || started.slug !== slug)) status = "chrono non vérifié";
+  else if (!live && timeLimit && durationSec > timeLimit * 60 + 90) status = "hors délai";
   else if (meta.ended === "time") status = "temps écoulé";
   // Interrompu, hors délai ou chrono invalide : pas de réussite ni de certificat
   const passed = pct >= passPct && (status === "ok" || status === "temps écoulé");
@@ -80,7 +84,7 @@ export async function gradeTest(slug: string, who: { firstName: string; lastName
   let certUrl: string | undefined;
   let certLabel: string | undefined;
   if (passed && certType !== "none") {
-    const nom = `${d.firstName} ${d.lastName.toUpperCase()}`;
+    const nom = `${d.firstName} ${d.lastName}`;
     const formation = String(row.trainingName || title);
     const now = new Date().toISOString();
     const text = fillText(String(row.certificateText || "").trim() || DEFAULT_TEXTS[certType], {
@@ -91,7 +95,7 @@ export async function gradeTest(slug: string, who: { firstName: string; lastName
       date: new Date(now).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" }),
     });
     const ref = `${now.slice(2, 10).replace(/-/g, "")}-${Math.random().toString(36).slice(2, 7).toUpperCase()}`;
-    certUrl = certificateUrl({ k: certType, n: nom, t: title, f: formation, x: text, s: `${score}/${total} (${pct} %)`, d: now, id: ref });
+    certUrl = certificateUrl({ k: certType, n: nom, t: title, f: formation, b: String(row.subject || "Formation"), x: text, s: `${score}/${total} (${pct} %)`, d: now, id: ref });
     certLabel = certType === "training" ? "certificat de réussite" : "attestation de réussite";
   }
 
@@ -107,6 +111,7 @@ export async function gradeTest(slug: string, who: { firstName: string; lastName
     exits,
     durationSec,
     status,
+    sessionId: live ? String(row.liveSession || "") : "",
   }).catch(() => {});
 
   const showCorrection = row.showCorrection !== false;

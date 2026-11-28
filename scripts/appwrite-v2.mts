@@ -83,6 +83,11 @@ await table("tests", "Tests", publicRead, [
   ["antiCheat", "bool"],
   ["maxExits", "int"],
   ["shuffle", "bool"],
+  ["mode", "varchar", 10],
+  ["liveState", "varchar", 10],
+  ["liveSession", "varchar", 40],
+  ["liveStartAt", "varchar", 40],
+  ["liveEndAt", "varchar", 40],
 ]);
 
 // Résultats des tests
@@ -100,6 +105,16 @@ await table("test_results", "Résultats des tests", publicCreate, [
   ["exits", "int"],
   ["durationSec", "int"],
   ["status", "varchar", 60],
+  ["sessionId", "varchar", 40],
+]);
+
+// Participants des sessions en direct (salle d'attente)
+await table("test_participants", "Participants aux sessions", publicCreate, [
+  ["testSlug", "varchar", 160, true],
+  ["sessionId", "varchar", 40, true],
+  ["firstName", "varchar", 80, true],
+  ["lastName", "varchar", 80, true],
+  ["email", "varchar", 254, true],
 ]);
 
 // Photos envoyées par les visiteurs (avis)

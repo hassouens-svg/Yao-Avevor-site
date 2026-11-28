@@ -7,15 +7,17 @@ import { site } from "@/lib/site";
  * Personne ne peut fabriquer ou modifier une attestation sans la clé, et aucune donnée n'est exposée.
  */
 export type CertType = "none" | "quiz" | "training";
-export type CertData = { k: Exclude<CertType, "none">; n: string; t: string; f?: string; x: string; s: string; d: string; id: string };
+/** k type · n nom · t test · f formation · b fanion (domaine) · x texte · s score · d date · id référence */
+export type CertData = { k: Exclude<CertType, "none">; n: string; t: string; f?: string; b?: string; x: string; s: string; d: string; id: string };
 
 const secret = () => process.env.CERTIFICATE_SECRET ?? process.env.UNSUBSCRIBE_SECRET ?? process.env.RESEND_API_KEY ?? "dev";
 const sign = (payload: string) => createHmac("sha256", secret()).update(payload).digest("base64url").slice(0, 32);
 
+/** Texte qui suit le nom de la formation (ou du test) sur le certificat. */
 export const DEFAULT_TEXTS: Record<Exclude<CertType, "none">, string> = {
   training:
-    "{nom} a suivi l’ensemble des modules de la formation « {formation} » et a réussi le test de fin de formation avec un score de {score}. Cette réussite atteste de l’assimilation des connaissances théoriques nécessaires pour cadrer, planifier, piloter et clôturer un projet.",
-  quiz: "{nom} a réussi le test « {test} » avec un score de {score}, attestant de sa bonne maîtrise des notions évaluées.",
+    "et a réussi le test de fin de formation avec un score de {score}, démontrant les connaissances nécessaires pour planifier, piloter et réussir un projet, de la conception à la clôture, en appliquant les bonnes pratiques et méthodes éprouvées.",
+  quiz: "avec un score de {score}, démontrant une bonne maîtrise des notions évaluées.",
 };
 
 export function fillText(template: string, v: { nom: string; formation: string; test: string; score: string; date: string }) {

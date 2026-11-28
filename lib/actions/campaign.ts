@@ -1,20 +1,8 @@
 "use server";
 
-import { APPWRITE_ENDPOINT, APPWRITE_PROJECT, ADMIN_TEAM } from "@/lib/appwrite/config";
+import { requireAdmin } from "@/lib/admin/server-auth";
 import { sendBatch, sendEmail } from "@/lib/email";
 import { campaignEmail } from "@/lib/email/templates";
-
-/** Vérifie, à partir d'un jeton de session Appwrite (JWT), que l'appelant est administrateur. */
-async function requireAdmin(jwt: string) {
-  const headers = { "X-Appwrite-Project": APPWRITE_PROJECT, "X-Appwrite-JWT": jwt };
-  const me = await fetch(`${APPWRITE_ENDPOINT}/account`, { headers, cache: "no-store" });
-  if (!me.ok) throw new Error("Session expirée : reconnectez-vous.");
-  const user = (await me.json()) as { email: string };
-  const t = await fetch(`${APPWRITE_ENDPOINT}/teams`, { headers, cache: "no-store" });
-  const teams = t.ok ? ((await t.json()) as { teams: { $id: string }[] }).teams : [];
-  if (!teams.some((x) => x.$id === ADMIN_TEAM)) throw new Error("Accès réservé aux administrateurs.");
-  return user;
-}
 
 export async function sendCampaign(jwt: string, input: { subject: string; markdown: string; preheader?: string; recipients: string[]; test?: boolean }) {
   try {
