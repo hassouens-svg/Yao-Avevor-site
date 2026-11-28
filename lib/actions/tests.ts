@@ -6,6 +6,7 @@ import { ADMIN_EMAIL, btn, esc, layout, p, sendEmail } from "@/lib/email";
 import type { QuizQuestion } from "@/lib/quiz/parse";
 import { site } from "@/lib/site";
 import { DEFAULT_TEXTS, certificateUrl, fillText, type CertType } from "@/lib/certificate";
+import { readToken, signToken } from "@/lib/sign";
 
 const identity = z.object({
   firstName: z.string().trim().min(1).max(80),
@@ -21,13 +22,22 @@ export type TestResult = {
   pct?: number;
   passed?: boolean;
   passPct?: number;
+  /** "ok" | "temps écoulé" | "interrompu (sortie de l'écran)" | "hors délai" */
+  status?: string;
   certificateUrl?: string;
   certificateLabel?: string;
   corrections?: { q: string; options: string[]; answer: number[]; given: number[]; correct: boolean; explanation?: string }[];
 };
 
+/** Démarrage du test : jeton signé qui fixe l'heure de départ (le chrono ne peut pas être trafiqué). */
+export async function startTest(slug: string) {
+  return signToken({ slug, t: Date.now() });
+}
+
+export type TestMeta = { token?: string; exits?: number; ended?: "normal" | "time" | "exits" };
+
 /** Correction côté serveur : les bonnes réponses ne sont jamais envoyées avant la fin du test. */
-export async function gradeTest(slug: string, who: { firstName: string; lastName: string; email: string }, answers: number[][]): Promise<TestResult> {
+export async function gradeTest(slug: string, who: { firstName: string; lastName: string; email: string }, answers: number[][], meta: TestMeta = {}): Promise<TestResult> {
   const id = identity.safeParse(who);
   if (!id.success) return { ok: false, message: "Nom, prénom ou email invalide." };
 
@@ -49,7 +59,19 @@ export async function gradeTest(slug: string, who: { firstName: string; lastName
   const total = questions.length;
   const pct = Math.round((score / total) * 100);
   const passPct = Number(row.passPct) || 70;
-  const passed = pct >= passPct;
+
+  // Chrono et surveillance
+  const timeLimit = Number(row.timeLimit) || 0; // minutes, 0 = sans limite
+  const started = readToken<{ slug: string; t: number }>(meta.token);
+  const durationSec = started && started.slug === slug ? Math.round((Date.now() - started.t) / 1000) : 0;
+  const exits = Math.max(0, Math.min(99, Number(meta.exits) || 0));
+  let status = "ok";
+  if (meta.ended === "exits") status = "interrompu (sortie de l’écran)";
+  else if (timeLimit && (!started || started.slug !== slug)) status = "chrono non vérifié";
+  else if (timeLimit && durationSec > timeLimit * 60 + 90) status = "hors délai";
+  else if (meta.ended === "time") status = "temps écoulé";
+  // Interrompu, hors délai ou chrono invalide : pas de réussite ni de certificat
+  const passed = pct >= passPct && (status === "ok" || status === "temps écoulé");
   const title = String(row.title);
   const d = id.data;
 
@@ -82,6 +104,9 @@ export async function gradeTest(slug: string, who: { firstName: string; lastName
     pct,
     passed,
     answers: JSON.stringify(corrections.map((c) => c.given)),
+    exits,
+    durationSec,
+    status,
   }).catch(() => {});
 
   const showCorrection = row.showCorrection !== false;
@@ -106,8 +131,8 @@ export async function gradeTest(slug: string, who: { firstName: string; lastName
       p(`Bonjour ${esc(d.firstName)},`) +
         p(`Voici votre résultat au test <strong>${esc(title)}</strong> :`) +
         `<p style="font-size:36px;font-weight:bold;margin:8px 0;color:${passed ? "#0d7480" : "#c2410c"}">${score} / ${total} · ${pct} %</p>` +
-        p(passed ? `Vous avez atteint le seuil de réussite (${passPct} %).` : `Le seuil de réussite est de ${passPct} %. Revoyez les points ci-dessous et retentez votre chance.`) +
-        (certUrl ? p(`Votre <strong>${certLabel}</strong> est disponible : téléchargez le PDF, imprimez-le ou partagez-le sur LinkedIn.`) + btn(`Télécharger mon ${certLabel}`, certUrl) : "") +
+        p(passed ? `Vous avez atteint le seuil de réussite (${passPct} %).${certUrl ? " Votre document de réussite était téléchargeable sur la page de résultat." : ""}` : `Le seuil de réussite est de ${passPct} %. Revoyez les points ci-dessous et retentez votre chance.`) +
+        (status !== "ok" && status !== "temps écoulé" ? p(`<strong>Statut :</strong> test ${esc(status)}.`) : "") +
         correctionHtml +
         btn(passed ? "Voir les autres tests" : "Refaire le test", passed ? `${site.url}/tests` : `${site.url}/tests/${slug}`),
     ),
@@ -116,8 +141,8 @@ export async function gradeTest(slug: string, who: { firstName: string; lastName
     to: ADMIN_EMAIL,
     subject: `Test « ${title} » : ${d.firstName} ${d.lastName} — ${pct} % ${passed ? "(réussi)" : ""}`,
     replyTo: d.email,
-    html: layout("Nouveau résultat de test", p(`${esc(d.firstName)} ${esc(d.lastName)} (${esc(d.email)}) : <strong>${score}/${total} — ${pct} %</strong> ${passed ? "✅ réussi" : "❌ non réussi"}`) + btn("Voir les résultats", `${site.url}/admin/tests`)),
+    html: layout("Nouveau résultat de test", p(`${esc(d.firstName)} ${esc(d.lastName)} (${esc(d.email)}) : <strong>${score}/${total} — ${pct} %</strong> ${passed ? "✅ réussi" : "❌ non réussi"}`) + p(`Durée : ${durationSec ? `${Math.floor(durationSec / 60)} min ${durationSec % 60} s` : "—"} · Sorties de l’écran : ${exits} · Statut : ${esc(status)}`) + btn("Voir les résultats", `${site.url}/admin/tests`)),
   });
 
-  return { ok: true, score, total, pct, passed, passPct, certificateUrl: certUrl, certificateLabel: certLabel, corrections: showCorrection ? corrections : undefined };
+  return { ok: true, score, total, pct, passed, passPct, status, certificateUrl: certUrl, certificateLabel: certLabel, corrections: showCorrection ? corrections : undefined };
 }

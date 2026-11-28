@@ -9,8 +9,9 @@ import { Btn, Card, Field, Select, TextArea, TextInput, Toggle, useToast } from 
 import { ShareLink } from "@/components/admin/share-link";
 import { cn } from "@/lib/cn";
 
-type TestRow = { $id: string; slug: string; title: string; subject?: string; description?: string; passPct?: number; questions?: string; source?: string; showCorrection?: boolean; published?: boolean; certificate?: string; trainingName?: string; certificateText?: string };
-type Result = { $id: string; $createdAt: string; testSlug: string; firstName: string; lastName: string; email: string; score: number; total: number; pct: number; passed: boolean };
+type TestRow = { $id: string; slug: string; title: string; subject?: string; description?: string; passPct?: number; questions?: string; source?: string; showCorrection?: boolean; published?: boolean; certificate?: string; trainingName?: string; certificateText?: string; timeLimit?: number; antiCheat?: boolean; maxExits?: number; shuffle?: boolean };
+type Result = { $id: string; $createdAt: string; testSlug: string; firstName: string; lastName: string; email: string; score: number; total: number; pct: number; passed: boolean; exits?: number; durationSec?: number; status?: string };
+const dur = (s?: number) => (s ? `${Math.floor(s / 60)} min ${String(s % 60).padStart(2, "0")}` : "—");
 
 const EXAMPLE = `1. Qui est responsable de prioriser le Product Backlog ?
 A) Le Scrum Master
@@ -91,6 +92,10 @@ export default function TestsAdmin() {
       certificate: edit.certificate || "none",
       trainingName: edit.trainingName ?? "",
       certificateText: edit.certificateText ?? "",
+      timeLimit: Math.max(0, Math.round(Number(edit.timeLimit) || 0)),
+      antiCheat: edit.antiCheat === true,
+      maxExits: Math.max(0, Math.round(Number(edit.maxExits) || 0)),
+      shuffle: edit.shuffle === true,
     };
     setSaving(true);
     try {
@@ -110,7 +115,7 @@ export default function TestsAdmin() {
   }
 
   function exportCsv(list: Result[], name: string) {
-    const lines = [["prenom", "nom", "email", "score", "total", "pourcentage", "reussi", "date"], ...list.map((r) => [r.firstName, r.lastName, r.email, r.score, r.total, r.pct, r.passed ? "oui" : "non", r.$createdAt.slice(0, 16).replace("T", " ")])];
+    const lines = [["prenom", "nom", "email", "score", "total", "pourcentage", "reussi", "statut", "duree", "sorties", "date"], ...list.map((r) => [r.firstName, r.lastName, r.email, r.score, r.total, r.pct, r.passed ? "oui" : "non", r.status ?? "ok", dur(r.durationSec), r.exits ?? 0, r.$createdAt.slice(0, 16).replace("T", " ")])];
     const csv = lines.map((l) => l.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(";")).join("\n");
     const a = document.createElement("a");
     a.href = URL.createObjectURL(new Blob(["﻿" + csv], { type: "text/csv;charset=utf-8" }));
@@ -149,14 +154,16 @@ export default function TestsAdmin() {
           <Card className="overflow-x-auto p-0 sm:p-0">
             <div className="flex justify-end p-3"><Btn variant="secondary" onClick={() => exportCsv(testResults, slug)} disabled={!testResults.length}><Download className="size-4" /> Exporter (Excel)</Btn></div>
             <table className="w-full text-left text-sm">
-              <thead className="bg-cloud text-xs text-muted uppercase"><tr><th className="px-4 py-3">Participant</th><th className="px-4 py-3">Email</th><th className="px-4 py-3">Score</th><th className="px-4 py-3">Résultat</th><th className="px-4 py-3">Date</th></tr></thead>
+              <thead className="bg-cloud text-xs text-muted uppercase"><tr><th className="px-4 py-3">Participant</th><th className="px-4 py-3">Email</th><th className="px-4 py-3">Score</th><th className="px-4 py-3">Résultat</th><th className="px-4 py-3">Durée</th><th className="px-4 py-3">Sorties</th><th className="px-4 py-3">Date</th></tr></thead>
               <tbody className="divide-y divide-line">
                 {testResults.map((r) => (
                   <tr key={r.$id}>
                     <td className="px-4 py-3 font-medium text-navy-deep">{r.firstName} {r.lastName}</td>
                     <td className="px-4 py-3 text-muted">{r.email}</td>
                     <td className="px-4 py-3 font-mono">{r.score}/{r.total} · {r.pct} %</td>
-                    <td className="px-4 py-3">{r.passed ? <span className="rounded-full bg-[#e8f5f6] px-2.5 py-1 text-xs text-teal">Réussi</span> : <span className="rounded-full bg-[#fff7ed] px-2.5 py-1 text-xs text-[#c2410c]">Non réussi</span>}</td>
+                    <td className="px-4 py-3">{r.passed ? <span className="rounded-full bg-[#e8f5f6] px-2.5 py-1 text-xs text-teal">Réussi</span> : <span className="rounded-full bg-[#fff7ed] px-2.5 py-1 text-xs text-[#c2410c]">Non réussi</span>}{r.status && r.status !== "ok" && <span className="mt-1 block text-xs text-[#9b1c1c]">{r.status}</span>}</td>
+                    <td className="px-4 py-3 font-mono text-xs text-muted">{dur(r.durationSec)}</td>
+                    <td className={cn("px-4 py-3 font-mono text-xs", r.exits ? "font-bold text-[#c2410c]" : "text-muted")}>{r.exits ?? 0}</td>
                     <td className="px-4 py-3 text-muted">{new Date(r.$createdAt).toLocaleString("fr-FR")}</td>
                   </tr>
                 ))}
@@ -177,6 +184,23 @@ export default function TestsAdmin() {
               <div className="flex flex-wrap gap-6">
                 <Toggle checked={edit.showCorrection !== false} onChange={(v) => set("showCorrection", v)} label="Montrer la correction à la fin" />
                 <Toggle checked={edit.published !== false} onChange={(v) => set("published", v)} label="Test en ligne" />
+              </div>
+              <div className="space-y-4 rounded-md border border-line bg-cloud p-4">
+                <p className="text-sm font-semibold text-navy-deep">Conditions d’examen</p>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <Field label="Durée (minutes)" hint="0 = pas de chrono. À la fin, le test est envoyé automatiquement.">
+                    <TextInput type="number" min={0} max={600} value={edit.timeLimit ?? 0} onChange={(e) => set("timeLimit", Number(e.target.value))} />
+                  </Field>
+                  {edit.antiCheat && (
+                    <Field label="Sorties d’écran tolérées" hint="0 = la première sortie termine le test.">
+                      <TextInput type="number" min={0} max={10} value={edit.maxExits ?? 0} onChange={(e) => set("maxExits", Number(e.target.value))} />
+                    </Field>
+                  )}
+                </div>
+                <div className="flex flex-col gap-3">
+                  <Toggle checked={edit.antiCheat === true} onChange={(v) => set("antiCheat", v)} label="Examen surveillé : sortie de l’écran détectée, copier-coller bloqué, écran maintenu allumé, plein écran sur ordinateur" />
+                  <Toggle checked={edit.shuffle === true} onChange={(v) => set("shuffle", v)} label="Mélanger l’ordre des questions et des réponses pour chaque participant" />
+                </div>
               </div>
               <div className="space-y-4 rounded-md border border-line bg-cloud p-4">
                 <Field label="Document téléchargeable (si le seuil est atteint)">

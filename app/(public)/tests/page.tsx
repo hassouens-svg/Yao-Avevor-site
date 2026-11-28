@@ -29,7 +29,7 @@ export default async function TestsPage() {
                       {t.description && <span className="mt-1 block text-sm text-muted">{t.description}</span>}
                     </span>
                     <span className="flex items-center gap-3 text-sm text-muted">
-                      {t.count} questions · réussite à {t.passPct} %
+                      {t.count} questions{t.timeLimit ? ` · ${t.timeLimit} min` : ""} · réussite à {t.passPct} %
                       <ArrowUpRight className="size-4 text-navy-deep" />
                     </span>
                   </Link>

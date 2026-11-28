@@ -1,15 +1,40 @@
 "use client";
 
-import { useState } from "react";
-import { ArrowLeft, ArrowRight, Check, X, Download } from "lucide-react";
-import { gradeTest, type TestResult } from "@/lib/actions/tests";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { AlertTriangle, ArrowLeft, ArrowRight, Check, Clock, Download, ShieldCheck, X } from "lucide-react";
+import { gradeTest, startTest, type TestMeta, type TestResult } from "@/lib/actions/tests";
 import type { PublicTest } from "@/lib/content";
 import { cn } from "@/lib/cn";
 
 const L = (i: number) => String.fromCharCode(65 + i);
 
+function shuffled(n: number) {
+  const a = Array.from({ length: n }, (_, k) => k);
+  for (let k = n - 1; k > 0; k--) {
+    const j = Math.floor(Math.random() * (k + 1));
+    [a[k], a[j]] = [a[j], a[k]];
+  }
+  return a;
+}
+const mmss = (s: number) => `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
+
+type WakeLock = { release: () => Promise<void> };
+
 export function QuizRunner({ test }: { test: PublicTest }) {
-  const [step, setStep] = useState<"id" | "quiz" | "done">("id");
+  const [step, setStep] = useState<"id" | "rules" | "quiz" | "done">("id");
+  const guarded = test.antiCheat || test.timeLimit > 0;
+  // Ordre d'affichage (mélangé si activé) ; les réponses restent stockées dans l'ordre d'origine
+  const [order, setOrder] = useState(() => test.questions.map((_, k) => k));
+  const [optOrder, setOptOrder] = useState(() => test.questions.map((q) => q.options.map((_, k) => k)));
+  const [token, setToken] = useState<string>();
+  const [deadline, setDeadline] = useState<number | null>(null);
+  const [left, setLeft] = useState<number | null>(null);
+  const [exits, setExits] = useState(0);
+  const [warning, setWarning] = useState<string | null>(null);
+  const [fsLost, setFsLost] = useState(false);
+  const away = useRef(false);
+  const finished = useRef(false);
+  const wake = useRef<WakeLock | null>(null);
   const [who, setWho] = useState({ firstName: "", lastName: "", email: "" });
   const [consent, setConsent] = useState(false);
   const [i, setI] = useState(0);
@@ -17,31 +42,160 @@ export function QuizRunner({ test }: { test: PublicTest }) {
   const [result, setResult] = useState<TestResult | null>(null);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
-  const q = test.questions[i];
+  const qi = order[i]; // index d'origine de la question affichée
+  const q = test.questions[qi];
   const answered = answers.filter((a) => a.length).length;
+  const answersRef = useRef(answers);
+  useEffect(() => {
+    answersRef.current = answers;
+  }, [answers]);
+  const exitsRef = useRef(0);
 
   function toggle(o: number) {
-    setAnswers((prev) => prev.map((a, k) => (k !== i ? a : q.multiple ? (a.includes(o) ? a.filter((x) => x !== o) : [...a, o]) : [o])));
+    setAnswers((prev) => prev.map((a, k) => (k !== qi ? a : q.multiple ? (a.includes(o) ? a.filter((x) => x !== o) : [...a, o]) : [o])));
   }
 
-  async function submit() {
-    if (answered < test.count && !confirm(`${test.count - answered} question(s) sans réponse. Terminer quand même ?`)) return;
-    setBusy(true);
-    setErr(null);
-    try {
-      const r = await gradeTest(test.slug, who, answers);
-      if (!r.ok) setErr(r.message ?? "Erreur.");
-      else {
-        setResult(r);
-        setStep("done");
-        window.scrollTo({ top: 0, behavior: "smooth" });
+  const submit = useCallback(
+    async (ended: TestMeta["ended"] = "normal") => {
+      if (finished.current) return;
+      const current = answersRef.current;
+      const missing = test.count - current.filter((a) => a.length).length;
+      if (ended === "normal" && missing > 0 && !confirm(`${missing} question(s) sans réponse. Terminer quand même ?`)) return;
+      finished.current = true;
+      setBusy(true);
+      setErr(null);
+      try {
+        const r = await gradeTest(test.slug, who, current, { token, exits: exitsRef.current, ended });
+        if (!r.ok) {
+          finished.current = false;
+          setErr(r.message ?? "Erreur.");
+        } else {
+          setResult(r);
+          setStep("done");
+          wake.current?.release().catch(() => {});
+          if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+      } catch {
+        finished.current = false;
+        setErr("Un problème technique est survenu. Merci de réessayer.");
+      } finally {
+        setBusy(false);
       }
-    } catch {
-      setErr("Un problème technique est survenu. Merci de réessayer.");
+    },
+    [test.count, test.slug, who, token],
+  );
+
+  async function begin() {
+    setBusy(true);
+    try {
+      if (test.shuffle) {
+        // Tirage au démarrage (jamais au rendu) : un ordre différent pour chaque participant
+        setOrder(shuffled(test.questions.length));
+        setOptOrder(test.questions.map((q) => shuffled(q.options.length)));
+      }
+      const tok = await startTest(test.slug);
+      setToken(tok);
+      if (test.timeLimit > 0) setDeadline(Date.now() + test.timeLimit * 60_000);
+      if (test.antiCheat) {
+        // Écran toujours allumé (téléphone) + plein écran sur ordinateur
+        try {
+          const nav = navigator as Navigator & { wakeLock?: { request: (t: "screen") => Promise<WakeLock> } };
+          wake.current = (await nav.wakeLock?.request("screen")) ?? null;
+        } catch {}
+        if (window.matchMedia("(pointer: fine)").matches) document.documentElement.requestFullscreen?.().catch(() => {});
+      }
+      setStep("quiz");
     } finally {
       setBusy(false);
     }
   }
+
+  // Compte à rebours
+  useEffect(() => {
+    if (step !== "quiz" || !deadline) return;
+    const tick = () => {
+      const s = Math.max(0, Math.round((deadline - Date.now()) / 1000));
+      setLeft(s);
+      if (s <= 0) submit("time");
+    };
+    tick();
+    const id = setInterval(tick, 500);
+    return () => clearInterval(id);
+  }, [step, deadline, submit]);
+
+  // Surveillance : sortie de l'onglet / de la fenêtre / écran éteint
+  useEffect(() => {
+    if (step !== "quiz" || !test.antiCheat) return;
+    const leave = () => {
+      if (away.current || finished.current) return;
+      away.current = true;
+      exitsRef.current += 1;
+      setExits(exitsRef.current);
+    };
+    const back = async () => {
+      if (!away.current || finished.current) return;
+      away.current = false;
+      const n = exitsRef.current;
+      if (n > test.maxExits) {
+        setWarning(null);
+        submit("exits");
+        return;
+      }
+      const rest = test.maxExits - n;
+      setWarning(`Vous avez quitté l’écran du test (${n} sortie${n > 1 ? "s" : ""}). ${rest === 0 ? "À la prochaine sortie, le test sera terminé automatiquement." : `Encore ${rest} sortie${rest > 1 ? "s" : ""} tolérée${rest > 1 ? "s" : ""}, ensuite le test sera terminé.`}`);
+      // Le verrou d'écran est libéré quand la page est cachée : on le redemande
+      try {
+        const nav = navigator as Navigator & { wakeLock?: { request: (t: "screen") => Promise<WakeLock> } };
+        wake.current = (await nav.wakeLock?.request("screen")) ?? null;
+      } catch {}
+    };
+    const onVis = () => (document.hidden ? leave() : back());
+    const onFs = () => setFsLost(!document.fullscreenElement && window.matchMedia("(pointer: fine)").matches);
+    const block = (e: Event) => e.preventDefault();
+    const beforeUnload = (e: BeforeUnloadEvent) => e.preventDefault();
+    document.addEventListener("visibilitychange", onVis);
+    window.addEventListener("blur", leave);
+    window.addEventListener("focus", back);
+    document.addEventListener("fullscreenchange", onFs);
+    document.addEventListener("copy", block);
+    document.addEventListener("cut", block);
+    document.addEventListener("contextmenu", block);
+    window.addEventListener("beforeunload", beforeUnload);
+    return () => {
+      document.removeEventListener("visibilitychange", onVis);
+      window.removeEventListener("blur", leave);
+      window.removeEventListener("focus", back);
+      document.removeEventListener("fullscreenchange", onFs);
+      document.removeEventListener("copy", block);
+      document.removeEventListener("cut", block);
+      document.removeEventListener("contextmenu", block);
+      window.removeEventListener("beforeunload", beforeUnload);
+    };
+  }, [step, test.antiCheat, test.maxExits, submit]);
+
+  // Sans surveillance : simple avertissement si on quitte la page en plein test
+  useEffect(() => {
+    if (step !== "quiz" || test.antiCheat) return;
+    const beforeUnload = (e: BeforeUnloadEvent) => e.preventDefault();
+    window.addEventListener("beforeunload", beforeUnload);
+    return () => window.removeEventListener("beforeunload", beforeUnload);
+  }, [step, test.antiCheat]);
+
+  const rules = useMemo(() => {
+    const r: string[] = [];
+    if (test.timeLimit > 0) r.push(`Vous avez ${test.timeLimit} minutes. À la fin du temps, le test est envoyé automatiquement avec vos réponses.`);
+    if (test.antiCheat) {
+      r.push(
+        test.maxExits === 0
+          ? "Ne quittez pas cet écran : changer d’onglet, d’application ou de fenêtre, ou verrouiller votre téléphone, termine immédiatement le test."
+          : `Ne quittez pas cet écran : changer d’onglet, d’application ou de fenêtre, ou verrouiller votre téléphone, compte comme une sortie. Au-delà de ${test.maxExits} sortie${test.maxExits > 1 ? "s" : ""}, le test est terminé.`,
+      );
+      r.push("Un test interrompu ne donne pas droit au certificat. Le copier-coller est désactivé, l’écran reste allumé pendant le test et, sur ordinateur, le test s’ouvre en plein écran.");
+      r.push("Avant de commencer : branchez votre appareil, coupez les notifications et prévoyez un moment au calme.");
+    }
+    return r;
+  }, [test.timeLimit, test.antiCheat, test.maxExits]);
 
   const input = "h-12 w-full rounded-md border border-line bg-white px-4 text-[0.9375rem] outline-none focus:border-navy";
 
@@ -56,7 +210,8 @@ export function QuizRunner({ test }: { test: PublicTest }) {
             return;
           }
           setErr(null);
-          setStep("quiz");
+          if (guarded) setStep("rules");
+          else begin();
         }}
       >
         <div className="grid gap-4 sm:grid-cols-2">
@@ -70,9 +225,34 @@ export function QuizRunner({ test }: { test: PublicTest }) {
         </label>
         {err && <p className="text-sm text-[#9b1c1c]">{err}</p>}
         <button type="submit" className="inline-flex h-12 items-center gap-2 rounded-full bg-navy-deep px-7 text-sm font-medium text-white hover:bg-blue">
-          Commencer le test ({test.count} questions) <ArrowRight className="size-4" />
+          {guarded ? "Continuer" : `Commencer le test (${test.count} questions)`} <ArrowRight className="size-4" />
         </button>
       </form>
+    );
+
+  if (step === "rules")
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center gap-3">
+          <ShieldCheck className="size-6 text-copper" />
+          <h2 className="text-xl font-semibold text-navy-deep normal-case" style={{ fontFamily: "var(--font-sans)" }}>Conditions de l’examen</h2>
+        </div>
+        <ul className="space-y-3">
+          {rules.map((r) => (
+            <li key={r} className="flex gap-3 text-[0.9375rem] text-ink/85">
+              <span aria-hidden="true" className="mt-2 size-1.5 shrink-0 rotate-45 bg-copper" />
+              {r}
+            </li>
+          ))}
+        </ul>
+        <p className="text-sm text-muted">{test.count} questions · seuil de réussite {test.passPct} %.</p>
+        <div className="flex flex-wrap gap-3">
+          <button type="button" disabled={busy} onClick={begin} className="inline-flex h-12 items-center gap-2 rounded-full bg-navy-deep px-7 text-sm font-medium text-white hover:bg-blue disabled:opacity-60">
+            {busy ? "…" : "Je suis prêt(e), démarrer"} <ArrowRight className="size-4" />
+          </button>
+          <button type="button" onClick={() => setStep("id")} className="inline-flex h-12 items-center rounded-full border border-line px-6 text-sm">Retour</button>
+        </div>
+      </div>
     );
 
   if (step === "done" && result)
@@ -80,11 +260,20 @@ export function QuizRunner({ test }: { test: PublicTest }) {
       <div className="space-y-8">
         <div className={cn("rounded-md border p-8", result.passed ? "border-teal/30 bg-[#e8f5f6]" : "border-[#c2410c]/30 bg-[#fff7ed]")}>
           <p className="label-caps text-muted">{result.passed ? "Test réussi" : "Test non réussi"}</p>
+          {result.status && result.status !== "ok" && (
+            <p className="mt-2 inline-flex items-center gap-2 rounded-full bg-white/70 px-3 py-1 text-xs font-semibold text-[#9b1c1c]">
+              <AlertTriangle className="size-3.5" /> Test {result.status}
+            </p>
+          )}
           <p className={cn("display mt-3 text-[clamp(3rem,8vw,5rem)]", result.passed ? "text-teal" : "text-[#c2410c]")}>
             {result.score}/{result.total} · {result.pct} %
           </p>
           <p className="mt-2 text-ink/80">
-            {result.passed ? `Bravo ${who.firstName}, vous dépassez le seuil de ${result.passPct} %.` : `Le seuil de réussite est de ${result.passPct} %. Revoyez les points ci-dessous et retentez votre chance.`}
+            {result.passed
+              ? `Bravo ${who.firstName}, vous dépassez le seuil de ${result.passPct} %.`
+              : result.status === "interrompu (sortie de l’écran)"
+                ? "Le test a été arrêté car vous avez quitté l’écran trop de fois."
+                : `Le seuil de réussite est de ${result.passPct} %. Revoyez les points ci-dessous et retentez votre chance.`}
           </p>
           {result.certificateUrl && (
             <a
@@ -94,7 +283,8 @@ export function QuizRunner({ test }: { test: PublicTest }) {
               <Download className="size-4" /> Télécharger mon {result.certificateLabel} (PDF)
             </a>
           )}
-          <p className="mt-4 text-sm text-muted">Votre résultat{result.certificateUrl ? " et le lien de votre attestation vous ont été envoyés" : " vous a été envoyé"} à {who.email}.</p>
+          {result.certificateUrl && <p className="mt-3 text-sm font-medium text-navy-deep">Téléchargez-le maintenant : il n’est disponible que sur cette page.</p>}
+          <p className="mt-3 text-sm text-muted">Votre résultat vous a été envoyé à {who.email}.</p>
         </div>
         {result.corrections && (
           <ol className="space-y-4">
@@ -128,7 +318,41 @@ export function QuizRunner({ test }: { test: PublicTest }) {
     );
 
   return (
-    <div>
+    <div className={cn("relative", test.antiCheat && "select-none")}>
+      {(left !== null || test.antiCheat) && (
+        <div className="sticky top-[calc(var(--header-h)+0.5rem)] z-20 mb-5 flex items-center justify-between gap-3 rounded-md border border-line bg-white/95 px-4 py-2.5 shadow-soft backdrop-blur">
+          {left !== null ? (
+            <span className={cn("inline-flex items-center gap-2 font-mono text-lg font-bold tabular-nums", left <= 60 ? "animate-pulse text-[#c2410c]" : left <= 300 ? "text-copper" : "text-navy-deep")} aria-live={left <= 60 ? "assertive" : "off"}>
+              <Clock className="size-4" /> {mmss(left)}
+            </span>
+          ) : (
+            <span />
+          )}
+          {test.antiCheat && (
+            <span className="inline-flex items-center gap-1.5 text-xs text-muted">
+              <ShieldCheck className="size-4 text-copper" /> Examen surveillé · sorties : {exits}/{test.maxExits}
+            </span>
+          )}
+        </div>
+      )}
+      {warning && (
+        <div role="alertdialog" aria-modal="true" className="fixed inset-0 z-[150] flex items-center justify-center bg-navy-deep/70 p-6 backdrop-blur-sm">
+          <div className="max-w-md rounded-md bg-white p-7 shadow-lift">
+            <AlertTriangle className="size-8 text-[#c2410c]" />
+            <p className="mt-4 text-[1.0625rem] font-semibold text-navy-deep">Sortie de l’écran détectée</p>
+            <p className="mt-2 text-sm text-ink/80">{warning}</p>
+            <button type="button" onClick={() => setWarning(null)} className="mt-6 inline-flex h-11 items-center rounded-full bg-navy-deep px-6 text-sm text-white">Reprendre le test</button>
+          </div>
+        </div>
+      )}
+      {fsLost && !warning && (
+        <div className="fixed inset-0 z-[140] flex items-center justify-center bg-navy-deep/70 p-6 backdrop-blur-sm">
+          <div className="max-w-md rounded-md bg-white p-7 text-center shadow-lift">
+            <p className="font-semibold text-navy-deep">Le test se passe en plein écran.</p>
+            <button type="button" onClick={() => document.documentElement.requestFullscreen?.().catch(() => {})} className="mt-5 inline-flex h-11 items-center rounded-full bg-navy-deep px-6 text-sm text-white">Revenir en plein écran</button>
+          </div>
+        </div>
+      )}
       <div className="flex items-center justify-between text-sm text-muted">
         <span className="font-mono">Question {i + 1} / {test.count}</span>
         <span>{answered} répondue(s)</span>
@@ -141,8 +365,9 @@ export function QuizRunner({ test }: { test: PublicTest }) {
       </h2>
       {q.multiple && <p className="mt-2 text-sm text-blue">Plusieurs réponses possibles.</p>}
       <ul className="mt-6 space-y-3">
-        {q.options.map((o, oi) => {
-          const on = answers[i].includes(oi);
+        {optOrder[qi].map((oi, pos) => {
+          const o = q.options[oi];
+          const on = answers[qi].includes(oi);
           return (
             <li key={oi}>
               <button
@@ -151,7 +376,7 @@ export function QuizRunner({ test }: { test: PublicTest }) {
                 aria-pressed={on}
                 className={cn("flex w-full items-start gap-4 rounded-md border p-4 text-left transition-colors", on ? "border-navy-deep bg-navy-deep text-white" : "border-line bg-white hover:border-navy/40")}
               >
-                <span className={cn("inline-flex size-7 shrink-0 items-center justify-center rounded-full border font-mono text-sm", on ? "border-white" : "border-line")}>{L(oi)}</span>
+                <span className={cn("inline-flex size-7 shrink-0 items-center justify-center rounded-full border font-mono text-sm", on ? "border-white" : "border-line")}>{L(pos)}</span>
                 <span className="pt-0.5">{o}</span>
               </button>
             </li>
@@ -168,14 +393,14 @@ export function QuizRunner({ test }: { test: PublicTest }) {
             Suivante <ArrowRight className="size-4" />
           </button>
         ) : (
-          <button type="button" disabled={busy} onClick={submit} className="inline-flex h-11 items-center gap-2 rounded-full bg-teal px-6 text-sm text-white disabled:opacity-60">
+          <button type="button" disabled={busy} onClick={() => submit("normal")} className="inline-flex h-11 items-center gap-2 rounded-full bg-teal px-6 text-sm text-white disabled:opacity-60">
             {busy ? "Correction…" : "Terminer et voir mon résultat"}
           </button>
         )}
       </div>
       <div className="mt-8 flex flex-wrap gap-1.5" aria-label="Aller à une question">
-        {test.questions.map((_, k) => (
-          <button key={k} type="button" onClick={() => setI(k)} className={cn("size-8 rounded font-mono text-xs", k === i ? "bg-navy-deep text-white" : answers[k].length ? "bg-sky-soft text-navy-deep" : "bg-cloud text-muted")}>
+        {order.map((orig, k) => (
+          <button key={k} type="button" onClick={() => setI(k)} className={cn("size-8 rounded font-mono text-xs", k === i ? "bg-navy-deep text-white" : answers[orig].length ? "bg-sky-soft text-navy-deep" : "bg-cloud text-muted")}>
             {k + 1}
           </button>
         ))}

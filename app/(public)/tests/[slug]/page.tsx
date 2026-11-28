@@ -24,7 +24,7 @@ export default async function TestPage({ params }: { params: Promise<{ slug: str
         <Link href="/tests" className="inline-flex items-center gap-2 text-sm text-muted hover:text-navy-deep">
           <ArrowLeft className="size-4" strokeWidth={1.5} /> Tous les tests
         </Link>
-        <p className="label-caps mt-8 text-blue">{test.subject || "Test"} · {test.count} questions · réussite à {test.passPct} %</p>
+        <p className="label-caps mt-8 text-blue">{test.subject || "Test"} · {test.count} questions{test.timeLimit ? ` · ${test.timeLimit} min` : ""} · réussite à {test.passPct} %{test.antiCheat ? " · examen surveillé" : ""}</p>
         <h1 className="mt-3 text-h1 text-navy-deep">{test.title}</h1>
         {test.description && <p className="mt-4 text-lead text-muted">{test.description}</p>}
         <div className="mt-10 rounded-md border border-line bg-white p-6 sm:p-10">

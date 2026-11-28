@@ -165,7 +165,7 @@ export async function getGallery() {
   return gallery;
 }
 
-export type PublicTest = { slug: string; title: string; subject: string; description: string; passPct: number; count: number; questions: { q: string; options: string[]; multiple: boolean }[] };
+export type PublicTest = { slug: string; title: string; subject: string; description: string; passPct: number; timeLimit: number; antiCheat: boolean; maxExits: number; shuffle: boolean; count: number; questions: { q: string; options: string[]; multiple: boolean }[] };
 
 /** Tests publiés, sans les bonnes réponses (la correction se fait côté serveur). */
 export async function getTests(): Promise<PublicTest[]> {
@@ -181,6 +181,10 @@ export async function getTests(): Promise<PublicTest[]> {
         subject: str(x.subject),
         description: str(x.description),
         passPct: Number(x.passPct) || 70,
+        timeLimit: Number(x.timeLimit) || 0,
+        antiCheat: x.antiCheat === true,
+        maxExits: Math.max(0, Number(x.maxExits) || 0),
+        shuffle: x.shuffle === true,
         count: qs.length,
         questions: qs.map(({ q, options, answer }) => ({ q, options, multiple: (answer ?? []).length > 1 })),
       };

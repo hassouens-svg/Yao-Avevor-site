@@ -79,6 +79,10 @@ await table("tests", "Tests", publicRead, [
   ["certificate", "varchar", 20],
   ["trainingName", "varchar", 300],
   ["certificateText", "text"],
+  ["timeLimit", "int"],
+  ["antiCheat", "bool"],
+  ["maxExits", "int"],
+  ["shuffle", "bool"],
 ]);
 
 // Résultats des tests
@@ -93,6 +97,9 @@ await table("test_results", "Résultats des tests", publicCreate, [
   ["pct", "int"],
   ["passed", "bool"],
   ["answers", "longtext"],
+  ["exits", "int"],
+  ["durationSec", "int"],
+  ["status", "varchar", 60],
 ]);
 
 // Photos envoyées par les visiteurs (avis)
