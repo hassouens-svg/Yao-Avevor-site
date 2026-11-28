@@ -1,0 +1,159 @@
+1. Qui signe la charte de projet et s'engage ainsi formellement sur le lancement du projet ?
+A) Le chef de projet seul, pour s'auto-désigner
+B) Le sponsor
+C) Les principaux fournisseurs
+D) L'ensemble de l'équipe projet
+Réponse : B
+Explication : La charte est signée par le sponsor : engagement formel, elle nomme le chef de projet.
+
+2. Quelle stratégie consiste à confier les conséquences d'une menace à un tiers (assureur, fournisseur), souvent moyennant une prime ?
+A) Éviter
+B) Atténuer
+C) Transférer
+D) Accepter
+Réponse : C
+Explication : Transférer : la responsabilité de l'impact passe à un tiers ; le risque existe toujours.
+
+3. Projet de déménagement de l'atelier d'usinage. Le directeur d'usine valide le budget mais ne suit pas le projet au quotidien. Les opérateurs de l'atelier sont très inquiets pour leurs futurs postes de travail, mais ne décident de rien. Quelle stratégie appliquer aux opérateurs ?
+A) Tenir informé
+B) Gérer de près
+C) Maintenir satisfait
+D) Surveiller
+Réponse : A
+Explication : Intérêt élevé + pouvoir faible → tenir informé : communication régulière, réunions d'information, solliciter leurs idées.
+
+4. Quel outil découpe le projet en lots de travaux plus faciles à gérer, jusqu'à des tâches confiées à un responsable unique ?
+A) La matrice de traçabilité
+B) Le registre des parties prenantes
+C) La charte de projet
+D) L'organigramme des tâches (WBS)
+Réponse : D
+Explication : Le WBS découpe le travail ; chaque tâche élémentaire respecte la règle des 3R.
+
+5. Dans le pilotage par la valeur acquise, quelle est la définition de la valeur acquise (VA) ?
+A) Le montant réellement dépensé à cette date pour le travail effectué
+B) La valeur budgétée du travail réellement terminé à cette date
+C) Le montant que l'on devait avoir dépensé à cette date selon le budget ventilé
+D) Le budget total initial du projet (BAC)
+Réponse : B
+Explication : La valeur acquise (VA) est la valeur budgétée du travail réellement terminé. A = coût réel (CR), C = valeur planifiée (VP), D = budget initial (BAC).
+
+6. Quelle est la différence entre un contrat « avec intéressement » et un contrat « avec prime à la performance » ?
+A) L'intéressement récompense un objectif mesurable (date, coût) ; la prime, un critère subjectif (satisfaction)
+B) L'intéressement ne s'applique qu'en régie ; la prime ne s'applique qu'au prix ferme
+C) La prime est une pénalité versée par le fournisseur en cas de retard
+D) Aucune : seuls les montants du bonus changent
+Réponse : A
+Explication : Intéressement = objectif mesurable ; prime à la performance = critère subjectif.
+
+7. Projet d'installation d'une nouvelle presse. L'unique fournisseur de l'outillage a déjà livré en retard deux fois cette année. L'équipe qualifie un second fournisseur et passe la commande 4 semaines plus tôt que prévu. Quelle réponse au risque est appliquée ?
+A) Éviter
+B) Transférer
+C) Atténuer
+D) Accepter (active)
+Réponse : C
+Explication : On réduit la probabilité et l'impact du retard ; le risque n'est ni supprimé (éviter) ni confié à un tiers (transférer).
+
+8. Réseau : A (3 j) précède B (4 j) et C (2 j) ; B et C précèdent tous deux D (2 j). Le responsable de C est absent : C prend 3 jours de retard. Quel est l'effet sur la date de fin du projet ?
+A) +1 jour
+B) Aucun effet
+C) +3 jours
+D) +2 jours
+Réponse : A
+Explication : A-B-D = 9 j (critique) ; A-C-D = 7 j (marge 2). C +3 j → A-C-D = 10 j : la marge est dépassée, fin +1 jour, nouveau chemin critique.
+
+9. Pour une cellule robotisée, le bureau d'études chiffre d'abord la solution idéale à partir du WBS : 380 k€. La direction n'accorde que 250 k€ ; l'équipe retire alors des options pour tenir dans l'enveloppe. Quelle démarche a été suivie ?
+A) Design to cost uniquement
+B) Cost to design uniquement
+C) Cost to design, puis design to cost
+D) Estimation ascendante sans arbitrage
+Réponse : C
+Explication : On chiffre le besoin (cost to design), puis on arbitre pour revenir au budget imposé (design to cost).
+
+10. Un directeur lance oralement un projet de digitalisation des ordres de fabrication. Trois semaines plus tard, deux chefs de service contestent les objectifs et refusent de prêter du personnel au chef de projet. Quel livrable a manqué au démarrage ?
+A) Le diagramme de Gantt
+B) Le WBS
+C) La matrice de traçabilité
+D) Une charte de projet signée par le sponsor
+Réponse : D
+Explication : Sans charte : chacun a sa vision, objectifs flous, chef de projet sans légitimité ni autorité sur les ressources.
+
+11. Migration de l'ERP : le volume de données à reprendre ne sera connu qu'après un audit, impossible de chiffrer le travail aujourd'hui. Vous voulez que l'intégrateur soit motivé à basculer avant la fermeture estivale du 1er août. Quel contrat choisir ?
+A) Prix ferme et définitif
+B) Régie avec intéressement
+C) Prix ferme avec intéressement
+D) Régie avec prime à la performance
+Réponse : B
+Explication : Périmètre flou → régie ; bonus sur un objectif mesurable (date) → intéressement.
+
+12. Contrat de 24 mois pour fournir les tôles d'un nouveau convoyeur : quantités et spécifications sont figées, mais le cours de l'acier varie fortement. Le fournisseur refuse de s'engager sur un prix sans protection. Quel contrat choisir ?
+A) Régie avec honoraires fixes
+B) Prix ferme et définitif
+C) Prix ferme avec intéressement
+D) Prix ferme avec indexation
+Réponse : D
+Explication : Périmètre clair + engagement long + coût volatil → prix ferme avec indexation (risque partiellement porté par le client).
+
+13. Réseau (en semaines) : A (2) → B (5) → E (3) et A (2) → C (3) → D (3) → E (3). Le sponsor veut gagner 2 semaines. L'équipe propose de réduire B de 2 semaines grâce à des intérimaires. Quel sera le gain sur la fin du projet ?
+A) 2 semaines
+B) 1 semaine
+C) Aucun gain
+D) Le projet perd 1 semaine
+Réponse : C
+Explication : A-C-D-E = 11 sem. (critique) ; A-B-E = 10 sem. Réduire B (non critique) ne change rien : il faut agir sur C ou D.
+
+14. Le robot de la nouvelle ligne risque d'être livré en retard : probabilité estimée à 40 %, retard possible de 6 semaines. Avec les échelles du cours, quels sont le score de criticité et la décision ?
+A) P3 × I4 = 12 : criticité moyenne, le chef de projet décide
+B) P3 × I3 = 9 : on se contente de surveiller
+C) P4 × I4 = 16 : action obligatoire
+D) P2 × I5 = 10 : on accepte le risque
+Réponse : A
+Explication : 40 % → P = 3 (30 à 50 %) ; 6 semaines → I = 4 (1 à 2 mois) ; 12 = zone moyenne (8 à 12) : le chef de projet décide.
+
+15. Le fournisseur de capteurs offre 8 % de remise pour toute commande passée avant le 30 juin. L'équipe avance la revue de conception pour être certaine de commander avant cette date. Quelle stratégie face à cette opportunité ?
+A) Améliorer
+B) Partager
+C) Exploiter
+D) Accepter
+Réponse : C
+Explication : On garantit la réalisation de l'opportunité (probabilité portée à 100 %) → exploiter, pas seulement améliorer.
+
+16. Quelle affirmation sur les exigences et le périmètre est exacte ?
+A) Une exigence est une décision de cadrage qui fixe les frontières du projet
+B) Le périmètre reprend toujours l'intégralité des exigences exprimées
+C) La matrice de traçabilité remplace la définition du périmètre
+D) Le périmètre retient une partie des exigences et trace la frontière inclus / exclu
+Réponse : D
+Explication : L'exigence exprime le besoin ; le périmètre en retient une partie et fixe ce qui est inclus et exclu.
+
+17. Projet de rénovation d'un four : lots du WBS estimés à 92 k€, réserve pour aléas (risques identifiés) de 6 k€, réserve de gestion (imprévus) de 8 k€. Quels sont la référence de base des coûts et le budget total ?
+A) 92 k€ / 106 k€
+B) 98 k€ / 106 k€
+C) 100 k€ / 106 k€
+D) 106 k€ / 106 k€
+Réponse : B
+Explication : Référence de base = estimation + réserve pour aléas = 98 k€ ; budget = référence + réserve de gestion = 106 k€.
+
+18. Le directeur financier, très influent, suivait peu le projet. Il apprend que le projet demande 15 % de budget en plus et veut désormais être consulté sur chaque décision. Comment adapter sa gestion ?
+A) Passer en « gérer de près » : réunions régulières, consultation avant les décisions
+B) Rester en « maintenir satisfait » : son pouvoir n'a pas changé
+C) Passer en « tenir informé » : il demande seulement de l'information
+D) Passer en « surveiller » : communication minimale
+Réponse : A
+Explication : Son intérêt devient élevé, son pouvoir l'est déjà → gérer de près. La matrice évolue avec le projet.
+
+19. En réalisation, le responsable de production demande directement à un développeur un écran de supervision supplémentaire. Le développeur l'ajoute sans en parler au chef de projet. Quel est le problème, et comment aurait-il fallu le traiter ?
+A) Dérive du périmètre : tracer la demande et évaluer son impact (matrice de traçabilité)
+B) Aucun problème : le client interne est satisfait
+C) Retard sur le chemin critique : il suffit de mettre à jour le Gantt
+D) Risque à transférer au développeur par contrat
+Réponse : A
+Explication : Travail hors périmètre = dérive ; la matrice de traçabilité sert à évaluer l'impact d'une demande de changement.
+
+20. La direction hésite à lancer un projet d'automatisation. Elle demande d'analyser la faisabilité, les risques, les ressources et un planning avant de décider. Quel document produire, et qui le rédige ?
+A) Une charte de projet, signée par le sponsor
+B) Le registre des parties prenantes, tenu par le sponsor
+C) Le WBS, établi par l'équipe projet
+D) Une note de cadrage, rédigée par le chef de projet avec l'équipe
+Réponse : D
+Explication : La note de cadrage prépare la décision (rédigée par le CP) ; la charte l'officialise ensuite.
