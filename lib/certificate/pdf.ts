@@ -183,8 +183,11 @@ export async function renderCertificate(c: CertData) {
   page.drawText("Score obtenu :", { x: 560, y: H - 476, size: 10, font: mont, color: INK });
   page.drawText(clean(c.s), { x: 560, y: H - 492, size: 12, font: montSb, color: INK });
   page.drawLine({ start: { x: 554, y: H - 503 }, end: { x: 720, y: H - 503 }, thickness: 1, color: GOLD });
-  const ref = `N° ${c.id}`;
-  page.drawText(ref, { x: 720 - mont.widthOfTextAtSize(ref, 7.5), y: H - 516, size: 7.5, font: mont, color: rgb(0.45, 0.45, 0.45) });
+  // Numéro de certificat (unique, inscrit dans le lien signé : il ne peut pas être modifié)
+  const refLabel = "Certificat n° ";
+  const refW = mont.widthOfTextAtSize(refLabel, 8.5) + montSb.widthOfTextAtSize(c.id, 8.5);
+  page.drawText(refLabel, { x: (W - refW) / 2, y: 30, size: 8.5, font: mont, color: rgb(0.4, 0.4, 0.4) });
+  page.drawText(c.id, { x: (W - refW) / 2 + mont.widthOfTextAtSize(refLabel, 8.5), y: 30, size: 8.5, font: montSb, color: GREEN });
 
   // Sceau doré
   const sx = 421, sy = 470;

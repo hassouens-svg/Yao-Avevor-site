@@ -16,8 +16,8 @@ const sign = (payload: string) => createHmac("sha256", secret()).update(payload)
 /** Texte qui suit le nom de la formation (ou du test) sur le certificat. */
 export const DEFAULT_TEXTS: Record<Exclude<CertType, "none">, string> = {
   training:
-    "et a réussi le test de fin de formation avec un score de {score}, démontrant les connaissances nécessaires pour planifier, piloter et réussir un projet, de la conception à la clôture, en appliquant les bonnes pratiques et méthodes éprouvées.",
-  quiz: "avec un score de {score}, démontrant une bonne maîtrise des notions évaluées.",
+    "et a réussi le test de fin de formation avec un score de {score}. Cette réussite atteste de l’assimilation des connaissances théoriques nécessaires pour cadrer, planifier, piloter et clôturer un projet.",
+  quiz: "avec un score de {score}. Cette réussite atteste de sa bonne maîtrise théorique des notions évaluées.",
 };
 
 export function fillText(template: string, v: { nom: string; formation: string; test: string; score: string; date: string }) {

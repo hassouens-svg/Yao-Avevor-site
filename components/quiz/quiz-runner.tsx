@@ -354,7 +354,7 @@ export function QuizRunner({ test }: { test: PublicTest }) {
               <Download className="size-4" /> Télécharger mon {result.certificateLabel} (PDF)
             </a>
           )}
-          {result.certificateUrl && <p className="mt-3 text-sm font-medium text-navy-deep">Téléchargez-le maintenant : il n’est disponible que sur cette page.</p>}
+          {result.certificateUrl && <p className="mt-3 text-sm text-navy-deep">Le lien de téléchargement vous est aussi envoyé par email.</p>}
           <p className="mt-3 text-sm text-muted">Votre résultat vous a été envoyé à {who.email}.</p>
         </div>
         {result.corrections && (
